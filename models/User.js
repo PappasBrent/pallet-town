@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     },
     decks: [{
         type: mongoose.Schema.Types.ObjectId,

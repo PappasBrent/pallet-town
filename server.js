@@ -51,14 +51,15 @@ app.use(express.urlencoded({
     extended: true
 }))
 
-// global variables
+// global variables/middleware
 app.use((req, res, next) => {
     res.locals.successMessage = req.flash('successMessage')
     res.locals.errorMessage = req.flash('errorMessage')
     // these names are reserved for passport flashes
     res.locals.error = req.flash('error')
     res.locals.success = req.flash('success')
-    console.log(res.locals);
+    res.locals.isAuthenticated = req.isAuthenticated()
+    res.locals.currentUser = req.user
     next()
 })
 

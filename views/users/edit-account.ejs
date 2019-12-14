@@ -1,0 +1,18 @@
+<form action="/users/edit/<%= currentUser.id %>?_method=patch" method="post">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" value="<%= user.username %>" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="<%= user.email %>" />
+    </div>
+    <div>
+        <input type="submit" value="Update info" />
+    </div>
+</form>
+<form action="/users/delete/<%= currentUser.id %>?_method=delete" method="post">
+    <div>
+        <input class="btn btn-warning" type="submit" value="Delete account" />
+    </div>
+</form>

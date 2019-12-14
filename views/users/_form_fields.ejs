@@ -6,6 +6,12 @@
     <label for="password">Password:</label>
     <input type="password" name="password" value="<%= typeof password != 'undefined' ? password : "" %>" />
 </div>
+<% if (typeof canEdit != 'undefined') { %>
 <div>
-    <input type="submit" value="Log In" />
+    <label for="email">Email:</label>
+    <input type="email" name="email" value="<%= typeof email != 'undefined' ? email : "" %>" />
+</div>
+<% } %>
+<div>
+    <input type="submit" value="<%= submitMessage %>" />
 </div>

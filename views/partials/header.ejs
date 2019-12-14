@@ -2,6 +2,15 @@
     <nav class="main-nav">
         <h1>Pallet Town</h1>
         <ul class="nav-ul main-nav-ul">
+            <li><a href="/users/">View all users</a></li>
+            <% if ( currentUser == null ) { %>
+            <li><a href="/users/login">Log in</a></li>
+            <li><a href="/users/register">Register</a></li>
+            <% } else {%>
+            <li>
+                <form action="/users/logout?_method=delete" method="POST"><button type="submit">Log out</button></form>
+            </li>
+            <% } %>
         </ul>
     </nav>
 </header>
