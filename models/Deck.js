@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const deckSchema = new mongoose.Schema({
     name: {
@@ -17,4 +17,4 @@ const deckSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Deck', deckSchema)
+export default mongoose.model('Deck', deckSchema)

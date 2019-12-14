@@ -1,9 +1,12 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const Deck = require('../models/deck')
+import Deck from '../models/deck'
+import passport from 'passport'
 
 router.get('/', (req, res) => {
-    res.sendStatus(200)
+    return res.render('../views/index.ejs', {
+        req: req
+    })
 })
 
-module.exports = router
+export default router
