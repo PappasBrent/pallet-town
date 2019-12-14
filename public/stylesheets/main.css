@@ -1,17 +1,54 @@
-@import 'shared/variables';
+@import 'shared/variables.css';
 @import 'shared/buttons.css';
 @import 'shared/cards.css';
 @import 'shared/fonts.css';
-@import 'shared/form.css';
+@import 'shared/forms.css';
+@import 'shared/messages.css';
+@import 'shared/nav.css';
 @import 'shared/header.css';
+@import 'shared/footer.css';
 
 :root {
     font-family: "Open Sans";
     font-size: 24px;
+    color: var(--color-text-light);
 }
 
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-blue);
+}
+
+.body-grid {
+    min-height: 98vh;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-auto-rows: min-content 1fr min-content;
+    grid-template-areas:
+        "header"
+        "main"
+        "footer";
+
+}
+
+/* put these here since they go with main layout */
+header {
+    grid-area: "header";
+}
+
+main {
+    grid-area: "main";
+}
+
+footer {
+    grid-area: "footer";
+}
+
+a {
+    color: var(--color-4);
 }

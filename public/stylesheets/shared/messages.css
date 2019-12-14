@@ -1,0 +1,36 @@
+.msg {
+    border-radius: 5px;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.8rem;
+    padding-right: 1rem;
+    display: flex;
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.icon {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0.5rem;
+}
+
+.icon:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.msg-content:hover::after {
+    cursor: pointer;
+    color: var(--color-text-light);
+}
+
+.success-msg {
+    background-color: var(--color-success);
+    color: var(--color-text-dark);
+}
+
+.error-msg {
+    background-color: var(--color-error);
+}

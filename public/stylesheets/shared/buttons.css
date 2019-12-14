@@ -1,0 +1,9 @@
+.btn {}
+
+.logout-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-color-light);
+    cursor: pointer;
+}

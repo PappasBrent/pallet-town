@@ -100,7 +100,7 @@ router.post('/login', (req, res, next) => {
 })
 
 // attempt to logout
-router.delete('/logout', async (req, res) => {
+router.delete('/logout', ensureAuthenticated, async (req, res) => {
     const {
         username
     } = await User.findById(req.user)

@@ -1,17 +1,13 @@
-<div>
+<div class="form-field">
     <label for="username">Username:</label>
-    <input type="text" name="username" value="<%= typeof username != 'undefined' ? username : "" %>" />
-</div>
-<div>
+    <input class="form-input" form-input type="text" name="username"
+        value="<%= typeof username != 'undefined' ? username : "" %>" />
+</div class="form-field">
+<div class="form-field">
     <label for="password">Password:</label>
-    <input type="password" name="password" value="<%= typeof password != 'undefined' ? password : "" %>" />
+    <input class="form-input" form-input type="password" name="password"
+        value="<%= typeof password != 'undefined' ? password : "" %>" />
 </div>
-<% if (typeof canEdit != 'undefined') { %>
-<div>
-    <label for="email">Email:</label>
-    <input type="email" name="email" value="<%= typeof email != 'undefined' ? email : "" %>" />
-</div>
-<% } %>
-<div>
+<div class="form-field">
     <input type="submit" value="<%= submitMessage %>" />
 </div>

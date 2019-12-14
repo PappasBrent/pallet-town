@@ -1,0 +1,13 @@
+:root {
+    --color-text-light: #DDDDDD;
+    --color-text-dark: #444444;
+    --color-blue: hsla(204, 100%, 23%, 1);
+    --color-orange: hsla(28, 100%, 50%, 1);
+    --color-sand: hsla(42, 75%, 75%, 1);
+    --color-teal: hsla(182, 100%, 35%, 1);
+    --color-error: hsla(0, 100%, 32%, 1);
+    --color-success: hsl(141, 61%, 69%);
+    --color-success: hsl(141, 61%, 69%);
+}
+
+/* hsl(100, 100%, 50%) */
