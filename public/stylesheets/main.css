@@ -14,6 +14,12 @@
     color: var(--color-text-light);
 }
 
+@media only screen and (max-width: 450px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
 *,
 *::before,
 *::after {
@@ -33,8 +39,46 @@ body {
         "header"
         "main"
         "footer";
-
 }
+
+/* should only have 2 children */
+.deckbuilding-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.card-grid {
+    /* tried to use a grid but flex is just so easy */
+    display: flex;
+    justify-items: start;
+    flex-wrap: wrap;
+}
+
+.card-grid * {
+    margin: 0.2rem;
+    /* TODO: Save image size as variable */
+    width: 200px;
+}
+
+.card-container {
+    position: relative;
+}
+
+.card-count {
+    color: var(--color-text-dark);
+    font-weight: bold;
+    position: absolute;
+    bottom: 1rem;
+    /* TODO: Use image size here for positioning */
+    left: 160px;
+}
+.card-count::before {
+    content: 'X';
+    font-weight: bold;
+}
+
+/* TODO: Add some sort of image preview class */
+.preview {}
 
 /* put these here since they go with main layout */
 header {

@@ -1,23 +1,10 @@
-.user-form {
-    display: flex;
-    flex-direction: column;
-    align-items: space-between;
-    justify-items: center;
+form {
+    display: grid;
+    gap: 0.5rem;
 }
 
-.form-field {
-    display: flex;
-    flex-direction: row;
-    justify-items: end;
-    margin: 10px;
-}
-
-.form-field label {
-    min-width: 6rem;
-}
-
-input.form-input {
-    margin: 5px;
+form input,
+form select {
     padding: 0.1rem 0.2rem;
     border-radius: 5px;
     background-color: var(--color-teal);
@@ -28,6 +15,89 @@ input.form-input {
     outline: none;
 }
 
-input.form-input:focus {
+form select {
+    width: fit-content;
+}
+
+form select option:checked {
+    background-color: var(--color-blue);
+}
+
+form input:focus {
     border: 3px solid var(--color-success);
+}
+
+.user-form {
+    grid-auto-rows: min-content;
+    width: fit-content;
+}
+
+.edit-account-container {
+    display: grid;
+    grid-template-rows: min-content;
+    width: fit-content;
+    gap: 0.5rem;
+}
+
+/* looks good on desktop but doesn't scale well */
+/* .card-search-form {
+    grid-template-areas:
+        "name set"
+        "supertype types";
+    justify-content: start;
+} */
+
+.card-search-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-items: start;
+    justify-content: start;
+    align-items: center;
+    align-content: center;
+}
+
+.card-search-form * {
+    margin: 0.2rem;
+}
+
+.delete-user-form {
+    justify-self: end;
+    display: flex;
+}
+
+.delete-user-form .delete-user-field {
+    grid-template-columns: none;
+    justify-items: end;
+}
+
+.delete-user-field button,
+.update-user-field button {
+    min-width: 5rem;
+}
+
+.form-field {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.2rem;
+}
+
+.update-user-field {
+    grid-template-columns: none;
+    justify-items: end;
+}
+
+.card-name-field {
+    grid-area: name;
+}
+
+.expansion-name-field {
+    grid-area: set;
+}
+
+.card-type-field {
+    grid-area: supertype;
+}
+
+.pokemon-type-field {
+    grid-area: types;
 }

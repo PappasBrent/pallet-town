@@ -5,6 +5,10 @@ nav {
     align-items: center;
 }
 
+nav a {
+    text-decoration: none;
+}
+
 .nav-ul {
     display: flex;
     flex-grow: 1;
@@ -15,11 +19,11 @@ nav {
 
 .nav-ul li {
     padding-left: 1.5rem;
+    text-align: center;
 }
 
 .nav-ul li a:link,
 .nav-ul li button {
-    text-decoration: none;
     color: var(--color-3);
 }
 
