@@ -1,20 +1,18 @@
-<div class="edit-account-container">
-    <form class="user-form" action="/users/edit/<%= currentUser.id %>?_method=patch" method="post">
-        <div class="form-field">
-            <label for="username">Username:</label>
-            <input class="form-input" type="text" name="username" value="<%= user.username %>" />
-        </div>
-        <div class="form-field">
-            <label for="email">Email:</label>
-            <input class="form-input" type="email" name="email" value="<%= user.email %>" />
-        </div>
-        <div class="form-field update-user-field">
-            <button class="btn btn-info update-user-btn" type="submit">Update info</button>
-        </div>
-    </form>
-    <form class="delete-user-form" action="/users/delete/<%= currentUser.id %>?_method=delete" method="post">
-        <div class='form-field delete-user-field'>
-            <button class="btn btn-warning" type="submit">Delete account</button>
-        </div class='form-field'>
-    </form>
-</div>
+<form class="user-form" action="/users/edit/<%= currentUser.id %>?_method=patch" method="post">
+    <div class="form-field">
+        <label for="username">Username:</label>
+        <input class="form-input" type="text" name="username" value="<%= user.username %>" />
+    </div>
+    <div class="form-field">
+        <label for="email">Email:</label>
+        <input class="form-input" type="email" name="email" value="<%= user.email %>" />
+    </div>
+    <div class="form-field btn-field">
+        <button class="btn btn-info update-user-btn" type="submit">Update info</button>
+    </div>
+    <br>
+    <div class='form-field btn-field'>
+        <button formaction="/users/delete/<%= currentUser.id %>?_method=delete" formmethod="POST"
+            class="btn btn-warning" type="submit">Delete account</button>
+    </div class='form-field'>
+</form>

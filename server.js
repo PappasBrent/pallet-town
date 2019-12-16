@@ -4,9 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // set up imports, can use import statement since using esm
-import express, {
-    urlencoded
-} from 'express'
+import express from 'express'
 const app = express()
 import expressLayouts from 'express-ejs-layouts'
 import mongoose from 'mongoose'

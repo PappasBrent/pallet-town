@@ -1,13 +1,20 @@
 :root {
     --color-text-light: #DDDDDD;
     --color-text-dark: #444444;
+    --success-hue: 141;
+    --fail-hue: calc(var(--success-hue) + 180);
     --color-blue: hsla(204, 100%, 23%, 1);
     --color-orange: hsla(28, 100%, 50%, 1);
     --color-sand: hsla(42, 75%, 75%, 1);
     --color-teal: hsla(182, 100%, 35%, 1);
-    --color-error: hsla(0, 100%, 32%, 1);
-    --color-success: hsl(141, 61%, 69%);
-    --color-success: hsl(141, 61%, 69%);
+    --color-red: hsla(0, 100%, 32%, 1);
+
+    --color-success: hsl(var(--success-hue), 61%, 69%);
+    --color-success-dark: hsl(var(--success-hue), 61%, 30%);
+    --color-text-success: hsl(var(--fail-hue), 20%, 20%);
+
+    --color-fail: hsl(var(--fail-hue), 61%, 69%);
+    --color-text-fail: hsl(var(--success-hue), 20%, 20%);
 }
 
 /* hsl(100, 100%, 50%) */

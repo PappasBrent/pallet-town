@@ -27,10 +27,11 @@
 }
 
 .success-msg {
+    color: var(--color-text-success);
     background-color: var(--color-success);
-    color: var(--color-text-dark);
 }
 
 .error-msg {
-    background-color: var(--color-error);
+    color: var(--color-text-fail);
+    background-color: var(--color-fail);
 }

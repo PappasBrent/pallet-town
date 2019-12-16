@@ -1,0 +1,58 @@
+:root {
+    --card-width: 200px;
+    /* actual cards are 6.3cm x 8.8cm */
+    --card-aspect-ratio: calc(6.3 / 8.8);
+}
+
+.body-grid {
+    min-height: 98vh;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-auto-rows: min-content 1fr min-content;
+    grid-template-areas:
+        "header"
+        "main"
+        "footer";
+}
+
+/* should only have 2 children */
+.deckbuilding-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.card-grid {
+    /* tried to use a grid but flex is just so easy */
+    display: flex;
+    justify-items: start;
+    flex-wrap: wrap;
+}
+
+.card-grid * {}
+
+.card-container {
+    position: relative;
+}
+
+.card {
+    margin: 0.2rem;
+    width: var(--card-width);
+    height: calc(var(--card-width) / var(--card-aspect-ratio));
+    background-position-x: center;
+    background-size: cover;
+    position: relative;
+}
+
+.card::after {
+    content: attr(data-count);
+    font-size: 1.5rem;
+    color: black;
+    font-weight: 900;
+    position: absolute;
+    z-index: 10;
+    bottom: 0.2rem;
+    right: 0.5rem;
+}
+
+/* TODO: Add some sort of image preview class */
+.preview {}

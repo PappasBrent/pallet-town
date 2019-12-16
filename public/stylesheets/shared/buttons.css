@@ -1,4 +1,25 @@
-.btn {}
+.btn {
+    font-family: 'Open Sans';
+    font-size: 0.8rem;
+    /* font-weight: bold; */
+    border-radius: 5px;
+    padding: 0.2rem;
+    border: 2px solid var(--text-color-dark);
+}
+
+/* may need to change this for browser compatability */
+.btn:hover {
+    /* filter: brightness(0.8); */
+    font-weight: bold;
+}
+
+.btn-info {
+    background-color: var(--color-success);
+}
+
+.btn-warning {
+    background-color: var(--color-fail);
+}
 
 .logout-btn {
     background: none;
