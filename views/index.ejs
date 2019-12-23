@@ -1,11 +1,12 @@
 <div class="deckbuilding-layout">
     <div class="card-search">
         <h2>Add cards</h2>
-        <%- include('./partials/_form_fields_card_search.ejs') %>
+        <%- include('./partials/form_fields_card_search.ejs') %>
         <div class="card-grid card-search-grid"></div>
     </div>
     <div class="current-deck">
         <h2>Current deck</h2>
+        <%- include('./partials/deck_export_buttons.ejs') %>
         <div class="card-grid deck-grid"></div>
     </div>
 </div>

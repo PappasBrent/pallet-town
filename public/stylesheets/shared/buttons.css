@@ -1,4 +1,9 @@
+button {
+    cursor: pointer;
+}
+
 .btn {
+    color: black;
     font-family: 'Open Sans';
     font-size: 0.8rem;
     /* font-weight: bold; */
@@ -13,12 +18,28 @@
     font-weight: bold;
 }
 
+.btn:focus {
+    outline: none;
+}
+
+.btn:active {
+    font-weight: bold;
+}
+
 .btn-info {
     background-color: var(--color-success);
 }
 
+.btn-info:active {
+    background-color: var(--color-success-dark);
+}
+
 .btn-warning {
     background-color: var(--color-fail);
+}
+
+.btn-warning:active {
+    background-color: var(--color-fail-dark);
 }
 
 .logout-btn {

@@ -30,6 +30,25 @@ body {
     background-color: var(--color-blue);
 }
 
+.body-grid {
+    margin: 0;
+    min-height: 100vh;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-auto-rows: min-content 1fr min-content;
+    grid-template-areas:
+        "header"
+        "main"
+        "footer";
+}
+
+body,
+header,
+main,
+footer {
+    margin: 0;
+}
+
 /* put these here since they go with main layout */
 header {
     grid-area: "header";
@@ -44,5 +63,6 @@ footer {
 }
 
 a {
+    text-decoration: none;
     color: var(--color-4);
 }

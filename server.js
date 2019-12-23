@@ -45,6 +45,8 @@ app.set('views', `${__dirname}/views`)
 app.set('layout', 'layouts/layout')
 app.use(expressLayouts)
 app.use(express.static('public'))
+// json for deck building, urlencoded for form
+app.use(express.json())
 app.use(express.urlencoded({
     extended: true
 }))
@@ -60,8 +62,6 @@ app.use((req, res, next) => {
     res.locals.currentUser = req.user
     next()
 })
-
-
 
 // use routes
 app.use('/', indexRouter)

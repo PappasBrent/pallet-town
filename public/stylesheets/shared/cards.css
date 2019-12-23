@@ -4,17 +4,6 @@
     --card-aspect-ratio: calc(6.3 / 8.8);
 }
 
-.body-grid {
-    min-height: 98vh;
-    padding: 0 1.5rem;
-    display: grid;
-    grid-auto-rows: min-content 1fr min-content;
-    grid-template-areas:
-        "header"
-        "main"
-        "footer";
-}
-
 /* should only have 2 children */
 .deckbuilding-layout {
     display: grid;

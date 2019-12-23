@@ -3,6 +3,10 @@ form {
     gap: 0.5rem;
 }
 
+form * {
+    margin: 0.2rem;
+}
+
 form input,
 form select {
     padding: 0.1rem 0.2rem;
@@ -43,6 +47,13 @@ form input:focus {
     text-align: right;
 }
 
+.align-text-left {
+    text-align: left;
+}
+
+.align-text-right {
+    text-align: right;
+}
 
 /* looks good on desktop but doesn't scale well */
 /* .card-search-form {
@@ -59,10 +70,6 @@ form input:focus {
     justify-content: start;
     align-items: center;
     align-content: center;
-}
-
-.card-search-form * {
-    margin: 0.2rem;
 }
 
 .card-name-field {
