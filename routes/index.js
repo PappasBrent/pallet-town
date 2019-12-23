@@ -4,7 +4,9 @@ import fs from 'fs'
 import path from 'path'
 import request from 'request'
 import jimp from 'jimp'
-import crypto from 'crypto'
+import uuidv1 from 'uuid/v1'
+import uuidv4 from 'uuid/v4'
+import url from 'url'
 // TODO: Enable user to save decks
 // import Deck from '../models/deck'
 // import passport from 'passport'
@@ -14,20 +16,38 @@ router.get('/', (req, res) => {
 })
 
 // need to send cards in the request body
-router.post('/make-deck', async (req, res) => {
-    // cardUrls must be sorted beforehand
-    console.log(req.body)
+router.post('/make-deck/:type', async (req, res) => {
+    // TODO: Sort cards?
+
     const baseUrl = `${req.protocol}://${req.get('host')}`
     const cards = req.body.cards
-    try {
-        const imageUrl = await makeDeckImage(baseUrl, cards)
-        const jsonFilePath = await makeDeckJson(cards, imageUrl)
-        return res.json({
-            'ok': true,
-            'downloadHref': jsonFilePath
-        })
-    } catch (error) {
-        return res.json({
+    if (req.params.type === "tts") {
+        try {
+            const imageUrl = await makeDeckImage(baseUrl, cards)
+            const jsonFilePath = await makeDeckJson(cards, imageUrl)
+            return res.json({
+                'ok': true,
+                'downloadHref': jsonFilePath
+            })
+        } catch (error) {
+            return res.status(500).json({
+                "ok": false
+            })
+        }
+    } else if (req.params.type === "txt") {
+        try {
+            const txtFilePath = await makeDecklistText(cards)
+            return res.json({
+                'ok': true,
+                'downloadHref': txtFilePath
+            })
+        } catch (error) {
+            return res.status(500).json({
+                "ok": false
+            })
+        }
+    } else {
+        return res.status(400).json({
             "ok": false
         })
     }
@@ -39,20 +59,32 @@ function downloadImage(url, destPath) {
     })
 }
 
+function generateFilePath(destDir, ext) {
+    // Returns the path to a randomly named file with
+    // a given extension in a given directory
+    // Include the dot in the extension argument
+    // dir should be the name of a folder in the 
+    // public directory
+    let fn = uuidv1() + ext
+    let absPath = path.join(destDir, fn)
+    // not sure if I should do this, but make directory if it doesn't exist
+    if (!fs.existsSync(destDir)) fs.mkdirSync(destDir)
+    // make sure filename is not already taken
+    while (fs.existsSync(absPath)) {
+        fn = uuidv1() + ext
+        absPath = path.join(destDir, fn)
+    }
+    return absPath
+}
+
 async function makeDeckJson(cards, imageUrl) {
     return new Promise((resolve, reject) => {
-        let fn = crypto.randomBytes(12).toString('hex') + '.json'
         const appPath = path.dirname(require.main.filename)
         const destDir = path.join(appPath, 'public', 'deck-jsons')
-        let absPath = path.join(destDir, fn)
-        const downloadHref = `/deck-jsons/${fn}`
+        const ext = '.json'
+        const absPath = generateFilePath(destDir, ext)
+        const downloadHref = path.relative('public', absPath)
 
-        // first get a valid filename for the json
-        if (!fs.existsSync(destDir)) fs.mkdirSync(destDir)
-        while (fs.existsSync(absPath)) {
-            fn = crypto.randomBytes(12).toString('hex') + '.json'
-            absPath = path.join(__dirname, 'public', 'deck-jsons', fn)
-        }
         // TODO: Make sure the width and height
         // of this JSON matches that of the deck!
         const cardBackUrl = 'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
@@ -123,21 +155,13 @@ async function makeDeckJson(cards, imageUrl) {
 // have to return link to deck image
 // NOTE: liveserver must be OFF for this to work!
 async function makeDeckImage(baseUrl, cards) {
-    return await new Promise(async (resolveOuter, reject) => {
-        // TODO: Make a function that returns a path to a randomly named file in a given directory
-        let fn = crypto.randomBytes(12).toString('hex') + '.png'
+    return await new Promise(async (resolveOuter, rejectOuter) => {
         const appPath = path.dirname(require.main.filename)
-        const destDir = path.join(appPath, 'public', 'image-files')
-        let absPath = path.join(destDir, fn)
-        const downloadHref = `/image-files/${fn}`
-        const deckJsonHref = baseUrl + downloadHref
-
-        // first get a valid filename
-        if (!fs.existsSync(destDir)) fs.mkdirSync(destDir)
-        while (fs.existsSync(absPath)) {
-            fn = crypto.randomBytes(12).toString('hex') + '.png'
-            absPath = path.join(__dirname, 'public', 'image-files', fn)
-        }
+        const destDir = path.join(appPath, 'public', 'deck-images')
+        const ext = '.png'
+        const absPath = generateFilePath(destDir, ext)
+        const downloadHref = path.relative('public', absPath)
+        const deckJsonHref = new url.URL(downloadHref, baseUrl).toString()
 
         const cardWidth = 341
         const cardAspectRatio = 6.3 / 8.8
@@ -149,18 +173,16 @@ async function makeDeckImage(baseUrl, cards) {
 
         const cardPaths = []
         // downloading cards for image creation
-        for (const [i, card] of cards.entries()) {
-            const cardPath = path.join("public", "cards", '~' + i + '.png')
+        for (const card of cards) {
+            const cardPath = path.join("public", "cards", '~' + uuidv4() + '.png')
             console.log(card.name, cardPath);
             try {
                 await downloadImage(card.imageUrl, cardPath)
             } catch (error) {
-                reject(error)
+                rejectOuter(error)
             }
             cardPaths.push(cardPath)
         }
-
-        console.log('Done downloading needed cards');
 
         async function placeCardOnImgAtPoint(baseImg, cardImg, x, y) {
             await baseImg.composite(cardImg, x, y, [jimp.BLEND_DESTINATION_OVER, 0, 0])
@@ -182,15 +204,33 @@ async function makeDeckImage(baseUrl, cards) {
                     resolveInner()
                 })
             } catch (error) {
-                reject(error)
+                rejectOuter(error)
             }
         })
 
         // delete downloaded cards since they are no longer needed
         cardPaths.forEach(cardPath => fs.unlinkSync(cardPath))
-        console.log(absPath);
-        console.log(fs.existsSync(absPath))
         resolveOuter(deckJsonHref)
+    })
+}
+
+async function makeDecklistText(cards) {
+    return await new Promise((resolve, reject) => {
+        const appPath = path.dirname(require.main.filename)
+        const destDir = path.join(appPath, 'public', 'deck-txts')
+        const ext = '.txt'
+        const absPath = generateFilePath(destDir, ext)
+        const downloadHref = path.relative('public', absPath)
+        try {
+            let deckList = ""
+            for (const card of cards) {
+                deckList += `${card.count} ${card.name} ${card.setCode.toUpperCase()} ${card.number}\n`
+            }
+            fs.writeFileSync(absPath, deckList)
+        } catch (error) {
+            reject(error)
+        }
+        resolve(downloadHref)
     })
 }
 

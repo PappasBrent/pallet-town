@@ -15,7 +15,7 @@ function enableCardSearch() {
     const searchCardGrid = document.querySelector('.card-search-grid')
     const userCardGrid = document.querySelector('.deck-grid')
     // TODO: Finish pagination
-    const pageSize = 10
+    const pageSize = 12
 
     function clearGrid(grid) {
         while (grid.firstChild) grid.removeChild(grid.firstChild)
@@ -26,7 +26,7 @@ function enableCardSearch() {
         const formValues = {}
         formInputIds.forEach(id => formValues[id] = document.getElementById(id).value)
         const apiURL = "https://api.pokemontcg.io/v1/cards?"
-        if (formValues["supertype"] !== "pokemon") formValues["types"] = ''
+        if (["energy", "trainer"].includes(formValues["supertype"])) formValues["types"] = ''
         let searchParams = new URLSearchParams(formValues)
         searchParams.set("pageSize", pageSize)
 
@@ -69,54 +69,55 @@ function enableCardSearch() {
         return cardImg
     }
 
-
     clearGrid(searchCardGrid)
-    document.querySelector(".card-name-field > input").addEventListener("keyup", searchCards)
-    document.querySelector(".expansion-name-field > input").addEventListener("keyup", searchCards)
-    document.querySelector(".card-type-field > select").addEventListener("click", searchCards)
-    document.querySelector(".pokemon-type-field > select").addEventListener("click", searchCards)
-}
-
-function enableDeckExport() {
-    const userCardGrid = document.querySelector('.deck-grid')
-
-    document.getElementById("exportTabletopBtn").onclick = async function () {
-        if (this.dataset.clicked) return
-        this.dataset.clicked = true
-        const cardDivs = userCardGrid.querySelectorAll(".card")
-        const cards = []
-        cardDivs.forEach(cardDiv => cards.push({
-            ...cardDiv.dataset
-        }))
-
-        const headers = new Headers()
-        headers.set("content-type", "application/json")
-
-        try {
-            this.innerText = "Loading..."
-            const res = await fetch('make-deck', {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify({
-                    cards
-                })
-            })
-            const resJson = await res.json()
-            console.log(resJson)
-            if (!resJson.ok) {
-                this.innerText = "Error"
-                return
-            }
-            const downloadHref = resJson.downloadHref
-            this.innerText = "Download now!"
-            this.setAttribute('href', downloadHref)
-            this.setAttribute('download', '')
-        } catch (error) {
-            console.log(error)
-        }
+    const inputFields = document.querySelectorAll(".card-search-form input, .card-search-form select")
+    for (const inputField of inputFields) {
+        inputField.addEventListener("input", searchCards)
     }
 }
 
+// TODO: Reset export when deck is modified
+function enableDeckExport() {
+    const userCardGrid = document.querySelector('.deck-grid')
+    const exportBtns = document.querySelectorAll("a[data-export-type]")
+    for (const exportBtn of exportBtns) {
+        exportBtn.dataset.clicked = "false"
+        exportBtn.onclick = async function () {
+            if (this.dataset.clicked === "true") return
+            this.dataset.clicked = "true"
+            const cardDivs = userCardGrid.querySelectorAll(".card")
+            const cards = []
+            cardDivs.forEach(cardDiv => cards.push({
+                ...cardDiv.dataset
+            }))
+
+            const headers = new Headers()
+            headers.set("content-type", "application/json")
+
+            try {
+                this.innerText = "Loading..."
+                const res = await fetch(`make-deck/${exportBtn.dataset.exportType}`, {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify({
+                        cards
+                    })
+                })
+                const resJson = await res.json()
+                if (!resJson.ok) {
+                    this.innerText = "Error"
+                    return
+                }
+                const downloadHref = resJson.downloadHref
+                this.innerText = "Download now!"
+                this.setAttribute('href', downloadHref)
+                this.setAttribute('download', '')
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+}
 
 window.onload = () => {
     const closeIcons = document.querySelectorAll(".icon-close")
