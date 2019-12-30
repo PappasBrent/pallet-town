@@ -1,3 +1,7 @@
 .footer-nav {
     font-size: 0.9rem;
 }
+
+footer {
+    color: var(--color-dark);
+}

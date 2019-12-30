@@ -1,0 +1,53 @@
+:root {
+    --poke-line-height: 3px;
+    --poke-line-color: black;
+    --poke-ball-outer-radius: 30px;
+    --poke-ball-inner-radius: calc(var(--poke-ball-outer-radius)/3);
+}
+
+header {
+    background-color: var(--color-red);
+    position: relative;
+    border-bottom: var(--poke-line-height) solid var(--poke-line-color);
+}
+
+header a {
+    color: var(--color-light);
+}
+
+.pokeball {
+    position: absolute;
+    left: calc(50% - var(--poke-ball-outer-radius));
+    top: calc(100% - var(--poke-ball-outer-radius));
+    border-radius: 50%;
+    width: calc(var(--poke-ball-outer-radius) * 2);
+    height: calc(var(--poke-ball-outer-radius) * 2);
+    background-color: whitesmoke;
+}
+
+.pokeball-center {
+    position: absolute;
+    left: calc(50% - var(--poke-ball-inner-radius));
+    top: calc(50% - var(--poke-ball-inner-radius));
+    border: 3px solid var(--poke-line-color);
+    border-radius: 50%;
+    width: calc(var(--poke-ball-inner-radius) * 2);
+    height: calc(var(--poke-ball-inner-radius) * 2);
+    background-color: whitesmoke;
+}
+
+.poke-line {
+    background-color: black;
+    position: absolute;
+    width: calc(50% - var(--poke-ball-inner-radius));
+    height: var(--poke-line-height);
+    bottom: calc(50% - var(--poke-line-height));
+}
+
+.poke-line[data-side="left"] {
+    left: 0;
+}
+
+.poke-line[data-side="right"] {
+    right: 0;
+}

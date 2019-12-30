@@ -1,6 +1,11 @@
 <header>
     <nav class="main-nav">
         <h1><a href="/">Pallet Town</a></h1>
+        <div class="pokeball">
+            <div data-side="left" class="poke-line"></div>
+            <div class="pokeball-center"></div>
+            <div data-side="right" class="poke-line"></div>
+        </div>
         <ul class="nav-ul main-nav-ul">
             <li><a href="/">New Deck</a></li>
             <li><a href="/users/">Users</a></li>
@@ -10,8 +15,9 @@
             <li><a href="/users/register">Register</a></li>
             <% } else {%>
             <li>
-                <form action="/users/logout?_method=delete" method="POST"><button class="btn logout-btn"
-                        type="submit">Log out</button></form>
+                <form action="/users/logout?_method=delete" method="POST">
+                    <button class="btn logout-btn" type="submit">Log out</button>
+                </form>
             </li>
             <% } %>
         </ul>

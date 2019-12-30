@@ -3,3 +3,4 @@ node_modules/
 public/cards
 public/deck-*
 .eslintrc.json
+ignore/

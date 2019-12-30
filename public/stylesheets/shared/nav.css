@@ -22,11 +22,6 @@ nav a {
     text-align: center;
 }
 
-.nav-ul li a:link,
-.nav-ul li button {
-    color: var(--color-3);
-}
-
 .nav-ul li a:hover,
 .nav-ul li button:hover {
     font-weight: bold;

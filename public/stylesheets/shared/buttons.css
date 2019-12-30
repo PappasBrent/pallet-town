@@ -3,13 +3,14 @@ button {
 }
 
 .btn {
-    color: black;
+    color: var(--color-dark);
     font-family: 'Open Sans';
     font-size: 0.8rem;
     /* font-weight: bold; */
     border-radius: 5px;
     padding: 0.2rem;
-    border: 2px solid var(--text-color-dark);
+    /* border: 1px solid var(--color-dark); */
+    border: none;
 }
 
 /* may need to change this for browser compatability */
@@ -46,6 +47,6 @@ button {
     background: none;
     border: none;
     font-size: 1rem;
-    color: var(--text-color-light);
+    color: var(--color-light);
     cursor: pointer;
 }

@@ -164,6 +164,7 @@ async function makeDeckImage(baseUrl, cards) {
         const deckJsonHref = new url.URL(downloadHref, baseUrl).toString()
 
         const cardWidth = 341
+        // actual pokemon card aspect ratio in cm
         const cardAspectRatio = 6.3 / 8.8
         const cardHeight = cardWidth / cardAspectRatio
         const numCardsPerRow = 10
