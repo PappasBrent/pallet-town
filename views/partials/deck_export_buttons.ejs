@@ -4,9 +4,11 @@
         <label for="deckName">Deck Name</label>
         <input type="text" name="deckName" id="deckName">
     </div>
+    <% if (currentUser != null) { %>
     <div class="btn-field align-text-left">
-        <button class="btn btn-info" type="button">Save Deck</button>
+        <button id="saveDeckBtn" class="btn btn-info" type="button">Save Deck</button>
     </div>
+    <% } %>
     <div class="btn-field align-text-left">
         <a class="btn btn-info export" data-export-type="tts" role="button" href="#">Export to Tabletop</a>
         <a class="btn btn-info export" data-export-type="txt" role="button" href="#">Export decklist to text file</a>

@@ -1,0 +1,11 @@
+<!-- TODO: Style this -->
+<h2>Decks by <%= user.username %></h2>
+<div class="card-grid">
+    <% decks.forEach(deck => { %>
+    <a href="/decks/<%= deck.id %>"><%= deck.name %>
+        <% if (deck.cards.length > 0) { %>
+        <div class="card" style="background-image: url('<%=deck.cards[0].imageUrl %>')" alt=""></div>
+        <% } %>
+    </a>
+    <% }) %>
+</div>

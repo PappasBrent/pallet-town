@@ -119,7 +119,56 @@ function enableDeckExport() {
     }
 }
 
+function enableDeckSave() {
+    const userCardGrid = document.querySelector('.deck-grid')
+    const saveDeckBtn = document.getElementById("saveDeckBtn")
+    if (saveDeckBtn === null) return
+    saveDeckBtn.onclick = async function () {
+        const cardDivs = userCardGrid.querySelectorAll(".card")
+        const cards = []
+        cardDivs.forEach(cardDiv => cards.push({
+            ...cardDiv.dataset
+        }))
+        const deckName = document.getElementById("deckName").value
+
+        const headers = new Headers()
+        headers.set("content-type", "application/json")
+
+        try {
+            this.innerText = "Loading..."
+            const res = await fetch('decks/save', {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify({
+                    cards,
+                    deckName
+                })
+            })
+            const resJson = await res.json()
+            if (!resJson.ok) {
+                this.classList.remove('btn-info')
+                this.classList.add('btn-warning')
+                this.innerText = resJson.errorMessage
+                return
+            }
+            this.innerText = "Deck saved!"
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+function styleActiveTab() {
+    const tabs = document.querySelectorAll("header .nav-ul li a")
+    tabs.forEach(tab => {
+        if (window.location.pathname === tab.getAttribute('href'))
+            tab.classList.add("active-tab")
+    })
+}
+
 window.onload = () => {
+    styleActiveTab()
+
     const closeIcons = document.querySelectorAll(".icon-close")
     closeIcons.forEach(icon => icon.addEventListener("click", closeIconEvent));
     window.addEventListener("keydown", (e) => {
@@ -129,5 +178,6 @@ window.onload = () => {
     if (document.querySelector('.card-search')) {
         enableCardSearch()
         enableDeckExport()
+        enableDeckSave()
     }
 }

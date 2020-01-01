@@ -10,11 +10,8 @@ const deckSchema = new mongoose.Schema({
         required: true,
         ref: 'Creator'
     },
-    // keys are urls to cards
-    cardUrlCounts: {
-        type: Map,
-        of: Number
-    }
+    // based on json response from https: //pokemontcg.io/
+    cards: [mongoose.Schema.Types.Mixed]
 })
 
 export default mongoose.model('Deck', deckSchema)

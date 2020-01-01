@@ -8,12 +8,13 @@
         </div>
         <ul class="nav-ul main-nav-ul">
             <li><a href="/">New Deck</a></li>
-            <li><a href="/users/">Users</a></li>
-            <li><a href="/decks/">Decks</a></li>
+            <!-- <li><a href="/users/">Users</a></li> -->
             <% if ( currentUser == null ) { %>
             <li><a href="/users/login">Login</a></li>
             <li><a href="/users/register">Register</a></li>
             <% } else {%>
+            <li><a href="/decks/decksByUser/<%= currentUser.id %>">My Decks</a></li>
+            <li><a href="/users/<%= currentUser.id %>">My Account</a></li>
             <li>
                 <form action="/users/logout?_method=delete" method="POST">
                     <button class="btn logout-btn" type="submit">Log out</button>

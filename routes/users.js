@@ -9,6 +9,7 @@ import {
 } from '../config/auth'
 
 // view all users
+/*
 router.get('/', async (req, res) => {
     try {
         // TODO: paginate these results
@@ -20,6 +21,7 @@ router.get('/', async (req, res) => {
         res.sendStatus(500)
     }
 })
+*/
 
 // go to login page
 router.get('/login', forwardAuthenticated, (req, res) => {
@@ -137,8 +139,6 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-// TODO: ensure that current user matches the info of the user accessed
-
 // attempt to update account
 router.patch('/edit/:id', ensureAuthenticated, async (req, res) => {
     try {
@@ -146,7 +146,6 @@ router.patch('/edit/:id', ensureAuthenticated, async (req, res) => {
             username,
             email
         } = req.body
-        // This doesn't work; need to make sure that the current user matches the one being edited
         if (req.params.id != req.user.id) {
             req.flash("errorMessage", "You can't edit somebody else's info! Only your own silly")
             return res.redirect(`/users/edit/`)

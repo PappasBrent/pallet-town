@@ -7,9 +7,9 @@ import jimp from 'jimp'
 import uuidv1 from 'uuid/v1'
 import uuidv4 from 'uuid/v4'
 import url from 'url'
-// TODO: Enable user to save decks
+// TODO: Enable user to save and load decks
 // import Deck from '../models/deck'
-// import passport from 'passport'
+// import User from '../models/user'
 
 router.get('/', (req, res) => {
     return res.render('../views/index.ejs')

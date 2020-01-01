@@ -13,11 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         default: ""
-    },
-    decks: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Deck'
-    }]
+    }
 })
 
 export default mongoose.model('User', userSchema)
