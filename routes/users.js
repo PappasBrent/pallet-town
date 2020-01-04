@@ -1,6 +1,7 @@
 import express from 'express'
 const router = express.Router()
 import User from '../models/user'
+import Deck from '../models/deck'
 import passport from 'passport'
 import bcrypt from 'bcrypt'
 import {
@@ -177,6 +178,10 @@ router.delete('/delete/:id', ensureAuthenticated, async (req, res) => {
             return res.redirect(`/users/edit/`)
         }
         const currentUser = await User.findById(req.user.id)
+        // delete decks associated with this user before removal
+        await Deck.deleteMany({
+            creator: currentUser.id
+        })
         await currentUser.remove()
         req.flash("successMessage", "Successully deleted account")
         return res.redirect("/")

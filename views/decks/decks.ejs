@@ -1,10 +1,13 @@
 <!-- TODO: Style this -->
 <h2>Decks by <%= user.username %></h2>
 <div class="card-grid">
+    <!-- have to account for imageUrl property of dataset being renamed to lowercase -->
     <% decks.forEach(deck => { %>
-    <a href="/decks/<%= deck.id %>"><%= deck.name %>
+        <a href="/decks/edit/<%= deck.id %>"><%= deck.name %>
         <% if (deck.cards.length > 0) { %>
-        <div class="card" style="background-image: url('<%=deck.cards[0].imageUrl %>')" alt=""></div>
+        <div class="card"
+            style="background-image: url('<%=deck.cards[0].imageUrl != null ? deck.cards[0].imageUrl : deck.cards[0].imageurl%>')"
+            alt=""></div>
         <% } %>
     </a>
     <% }) %>

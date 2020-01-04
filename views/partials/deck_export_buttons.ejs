@@ -2,7 +2,7 @@
 <form action="#" method="POST">
     <div class="form-field">
         <label for="deckName">Deck Name</label>
-        <input type="text" name="deckName" id="deckName">
+        <input type="text" name="deckName" id="deckName" value="<%= typeof (deck) != 'undefined' ? deck.name : ''%>">
     </div>
     <% if (currentUser != null) { %>
     <div class="btn-field align-text-left">

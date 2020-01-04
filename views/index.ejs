@@ -1,3 +1,4 @@
+<script defer src="/javascripts/card-search.js"></script>
 <div class="deckbuilding-layout">
     <div class="card-search">
         <h2>Add cards</h2>
@@ -7,6 +8,21 @@
     <div class="current-deck">
         <h2>Current deck</h2>
         <%- include('./partials/deck_export_buttons.ejs') %>
-        <div class="card-grid deck-grid"></div>
+        <div class="card-grid deck-grid">
+            <!-- TOOD: Test this -->
+            <% if (typeof(deck) != 'undefined') { %>
+            <% deck.cards.forEach(card => { %>
+            <div class="card"
+                style="background-image: url('<%= card.imageUrl != null ? card.imageUrl : card.imageurl %>');"
+                <% for (const prop in card) {%>
+                    <% if (card.hasOwnProperty(prop)) { %>
+                    data-<%= prop %> = "<%= card[prop] %>"
+                    <% } %>
+                    <% } %>
+                >
+            </div>
+            <% }) %>
+            <% } %>
+        </div>
     </div>
 </div>
