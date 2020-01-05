@@ -7,9 +7,6 @@ import jimp from 'jimp'
 import uuidv1 from 'uuid/v1'
 import uuidv4 from 'uuid/v4'
 import url from 'url'
-// TODO: Enable user to save and load decks
-// import Deck from '../models/deck'
-// import User from '../models/user'
 
 router.get('/', (req, res) => {
     return res.render('../views/index.ejs')
@@ -17,7 +14,6 @@ router.get('/', (req, res) => {
 
 // need to send cards in the request body
 router.post('/make-deck/:type', async (req, res) => {
-    // TODO: Sort cards?
 
     const baseUrl = `${req.protocol}://${req.get('host')}`
     const cards = req.body.cards
@@ -120,8 +116,6 @@ async function makeDeckJson(cards, imageUrl) {
             const cardId = 100 + i
             const cardJson = {
                 "Name": "Card",
-                // TODO: Make this the nickname the
-                // name of the actual card
                 "Nickname": card.name,
                 "Transform": {
                     "posX": 0,

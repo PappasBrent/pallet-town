@@ -8,6 +8,8 @@
 @import 'shared/header.css';
 @import 'shared/footer.css';
 
+/* TODO: Masterball style sheet for dark theme */
+
 :root {
     font-family: "Open Sans";
     font-size: 24px;

@@ -22,7 +22,6 @@ import deckRouter from './routes/decks'
 // config app
 
 // express session
-// TODO: CHANGE SECRET KEY
 app.use(session({
     secret: process.env.SECRET_SESSION_KEY,
     resave: true,

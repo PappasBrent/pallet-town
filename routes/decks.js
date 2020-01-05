@@ -11,14 +11,6 @@ router.get('/', (req, res) => {
     return res.redirect('/')
 })
 
-// TODO: Allow users to edit and delete decks after saving them
-// TODO: Find a way to check if a user is updating a deck/changing its name vs making a new deck
-// need to use deck ID somehow. Tricky part will be when making a new deck.
-// Maybe make separate pages for totally new decks and updating preexisting decks?
-// Then could redirect user to edit page after initial save, which should be fine
-// since deck data will just be loaded in. Need to be careful with that in the front-end
-// js though
-
 // save a new deck to the currently logged in user's account
 router.post('/new', ensureAuthenticated, async (req, res) => {
     try {

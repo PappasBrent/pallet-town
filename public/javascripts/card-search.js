@@ -39,7 +39,7 @@ function displayCards(searchCardGrid, userCardGrid, cards) {
     })
 }
 
-// TODO: Implement pagination
+// TODO: Paginate results
 async function searchCards(searchCardGrid, userCardGrid) {
     clearElement(searchCardGrid)
     const formValues = {}
@@ -71,11 +71,7 @@ function addOnClickToUserCards(userCardGrid) {
     })
 }
 
-
-// TODO: Reset
-// export when deck is modified
-// TODO: FIx this so it works
-// for deck editing
+// TODO: Reset export when deck is modified
 function enableDeckExport(exportBtns, userCardGrid) {
     const reqBase = `${window.location.protocol}//${window.location.host}`
     for (const exportBtn of exportBtns) {
@@ -181,7 +177,7 @@ function initCardSearch() {
     enableCardSearch(searchCardGrid, userCardGrid, inputFields)
     addOnClickToUserCards(userCardGrid)
     enableDeckExport(exportBtns, userCardGrid)
-    enableDeckSave(saveDeckBtn, userCardGrid)
+    if (saveDeckBtn != null) enableDeckSave(saveDeckBtn, userCardGrid)
 }
 
 if (document.readyState !== "loading") initCardSearch()
