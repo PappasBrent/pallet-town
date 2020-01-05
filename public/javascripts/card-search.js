@@ -130,17 +130,29 @@ function enableDeckSave(saveDeckBtn, userCardGrid) {
         }))
         const deckName = document.getElementById("deckName").value
 
+        let deckId = null
+        if (saveDeckBtn.dataset.saveType === 'edit') {
+            // get deckId from URL
+            let path = window.location.pathname
+            // trim trailing /
+            while (path.endsWith("/")) path = path.slice(0, -1)
+            deckId = path.slice(path.lastIndexOf('/'))
+            // trim leading /
+            while (deckId.startsWith('/')) deckId = deckId.slice(1)
+        }
+
         this.innerText = "Loading..."
 
         try {
-            const res = await fetch(`${reqBase}/decks/save`, {
+            const res = await fetch(`${reqBase}/decks/${saveDeckBtn.dataset.saveType}`, {
                 method: "POST",
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),
                 body: JSON.stringify({
                     cards,
-                    deckName
+                    deckName,
+                    deckId
                 })
             })
             const resJson = await res.json()
@@ -164,8 +176,8 @@ function initCardSearch() {
     const searchCardGrid = document.querySelector('.card-search-grid')
     const userCardGrid = document.querySelector('.deck-grid')
     const inputFields = document.querySelectorAll(".card-search-form input, .card-search-form select")
-    const saveDeckBtn = document.getElementById("saveDeckBtn")
     const exportBtns = document.querySelectorAll("a[data-export-type]")
+    const saveDeckBtn = document.getElementById("saveDeckBtn")
     enableCardSearch(searchCardGrid, userCardGrid, inputFields)
     addOnClickToUserCards(userCardGrid)
     enableDeckExport(exportBtns, userCardGrid)

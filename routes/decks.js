@@ -6,9 +6,9 @@ import {
     ensureAuthenticated
 } from '../config/auth'
 
-// all decks
+// TODO: all decks
 router.get('/', (req, res) => {
-    return res.sendStatus(200)
+    return res.redirect('/')
 })
 
 // TODO: Allow users to edit and delete decks after saving them
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 // js though
 
 // save a new deck to the currently logged in user's account
-router.post('/save', ensureAuthenticated, async (req, res) => {
+router.post('/new', ensureAuthenticated, async (req, res) => {
     try {
         const {
             cards,
@@ -43,19 +43,13 @@ router.post('/save', ensureAuthenticated, async (req, res) => {
             })
         }
 
-        // see if deck exists, and update if so
-        let deckToSave = await Deck.findOne({
+        let newDeck = new Deck({
             name: deckName,
-            creator: req.user
+            creator: req.user,
+            cards: cards
         })
-        if (deckToSave === null) {
-            deckToSave = new Deck()
-        }
-        deckToSave.name = deckName
-        deckToSave.creator = req.user
-        deckToSave.cards = cards
 
-        await deckToSave.save()
+        await newDeck.save()
 
     } catch (error) {
         console.log(error);
@@ -80,24 +74,16 @@ router.get('/edit/:id', ensureAuthenticated, async (req, res) => {
     }
 })
 
-// TODO: add front-end functionality for this
-router.patch('/edit/:id', ensureAuthenticated, async (req, res) => {
+router.post('/edit', ensureAuthenticated, async (req, res) => {
     try {
         const {
             cards,
-            deckName
+            deckName,
+            deckId
         } = req.body
 
-        const deckToEdit = await Deck.findById(req.params.id)
-
-        if (deckToEdit.creator != req.user) {
-            return res.status(403).json({
-                "ok": false,
-                "errorMessage": "You can only edit a deck you made, not someone else's"
-            })
-        }
-
         // TODO: Find a better way of displaying these error messages
+        // TODO: Make some middleware to verify deck info
 
         if (deckName.trim() == "") {
             return res.status(400).json({
@@ -113,10 +99,27 @@ router.patch('/edit/:id', ensureAuthenticated, async (req, res) => {
             })
         }
 
-        deckToEdit.name = deckName
-        deckToEdit.cards = cards
+        let deckToUpdate = await Deck.findById(deckId)
 
-        await deckToEdit.save()
+        // check that the deck to update exists
+        if (deckToUpdate == null) {
+            return res.status(400).json({
+                "ok": false,
+                "errorMessage": "The specified deck does not exist"
+            })
+        }
+        // check that the deck to update was made by the current
+        if (deckToUpdate.creator != req.user.id) {
+            return res.status(403).json({
+                "ok": false,
+                "errorMessage": "You can only save changes to a deck that you made!"
+            })
+        }
+
+        deckToUpdate.name = deckName
+        deckToUpdate.cards = cards
+
+        await deckToUpdate.save()
 
     } catch (error) {
         console.log(error);
@@ -128,6 +131,31 @@ router.patch('/edit/:id', ensureAuthenticated, async (req, res) => {
     return res.json({
         "ok": true
     })
+})
+
+router.delete('/delete/:id', ensureAuthenticated, async (req, res) => {
+    const {
+        id
+    } = req.params
+
+    try {
+        const deckToDelete = await Deck.findById(id)
+
+        if (deckToDelete.creator != req.user.id) {
+            req.flash("errorMessage", "You can only delete decks that you made >:(")
+            return res.status(403).redirect(`/`)
+        }
+
+        await deckToDelete.remove()
+
+    } catch (error) {
+        console.log(error);
+        req.flash("errorMessage", "Something went wrong, deck not deleted :(")
+        return res.status(500).redirect(`/decks/decksByUser/${req.user.id}`)
+    }
+
+    req.flash("successMessage", "Successully deleted deck")
+    return res.redirect(`/decks/decksByUser/${req.user.id}`)
 })
 
 // look up all decks by a user
