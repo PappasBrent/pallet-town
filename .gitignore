@@ -4,3 +4,4 @@ public/cards/*
 public/deck-*/*
 .eslintrc.json
 ignore/
+*.rest
