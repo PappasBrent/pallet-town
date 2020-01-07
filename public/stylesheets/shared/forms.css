@@ -37,7 +37,8 @@ form input:focus {
     gap: 0.2rem;
 }
 
-.user-form {
+.user-form,
+.reset-password-form {
     grid-auto-rows: min-content;
     width: fit-content;
 }

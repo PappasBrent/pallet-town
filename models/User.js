@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         default: ""
-    }
+    },
+    passwordResetToken: String
 })
 
 export default mongoose.model('User', userSchema)

@@ -9,6 +9,7 @@ header {
     background-color: var(--color-red);
     position: relative;
     border-bottom: var(--poke-line-height) solid var(--poke-line-color);
+    margin-bottom: var(--poke-ball-outer-radius);
 }
 
 header a {

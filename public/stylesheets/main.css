@@ -45,8 +45,11 @@ body {
         "footer";
 }
 
+.small {
+    font-size: smaller;
+}
+
 body,
-header,
 main,
 footer {
     margin: 0;
@@ -74,4 +77,8 @@ footer {
 a {
     text-decoration: none;
     color: var(--color-dark);
+}
+
+a:hover {
+    font-weight: bold;
 }
