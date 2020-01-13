@@ -11,6 +11,11 @@ import {
     forwardAuthenticated
 } from '../config/auth'
 
+// check development status
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
 // view all users
 /*
 router.get('/', async (req, res) => {
@@ -33,18 +38,29 @@ async function sendPasswordResetEmail(req, email, token) {
     const baseUrl = `${req.protocol}://${req.get('host')}`
     const resetLink = `${baseUrl}/users/resetPassword/${token}`
     const testAccount = await nodemailer.createTestAccount()
+    // const transporter = nodemailer.createTransport({
+    //     host: "smtp.ethereal.email",
+    //     port: 587,
+    //     secure: false, // true for 465, false for other ports
+    //     auth: {
+    //         user: testAccount.user, // generated ethereal user
+    //         pass: testAccount.pass // generated ethereal password
+    //     }
+    // });
+
+    // TODO: Test transporter when SendPulse account has finished review
     const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
+        service: "SendPulse",
+        port: 465,
+        secure: true,
         auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: testAccount.pass // generated ethereal password
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD
         }
     });
     // send mail with defined transport object
     const info = await transporter.sendMail({
-        from: '"Pallet Town" <pallet-town@example.com>', // sender address
+        from: '"Pallet Town" <delibird@pallet-town.me>', // sender address
         to: `${email}`, // list of receivers
         subject: "Pallet Town Password Reset Request", // Subject line
         html: `<p>Hi there!
@@ -220,6 +236,11 @@ router.post('/resetPassword/:token', forwardAuthenticated, async (req, res) => {
 
     if (newPassword !== confirmNewPassword) {
         req.flash('errorMessage', 'Passwords must match')
+        return res.redirect(`/users/resetPassword/${passwordResetToken}`)
+    }
+
+    if (newPassword == '') {
+        req.flash('errorMessage', 'Please enter a password')
         return res.redirect(`/users/resetPassword/${passwordResetToken}`)
     }
 

@@ -47,16 +47,25 @@ async function searchCards(searchCardGrid, userCardGrid) {
     const apiURL = "https://api.pokemontcg.io/v1/cards?"
     if (["energy", "trainer"].includes(formValues["supertype"])) formValues["types"] = ''
     let searchParams = new URLSearchParams(formValues)
-    searchParams.set("pageSize", pageSize)
+    // searchParams.set("pageSize", pageSize)
 
     const results = await fetch(apiURL + searchParams.toString()).then(res => res.json())
     displayCards(searchCardGrid, userCardGrid, results.cards)
 }
 
-function enableCardSearch(searchCardGrid, userCardGrid, inputFields) {
+function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm) {
     clearElement(searchCardGrid)
-    for (const inputField of inputFields) {
-        inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid))
+    const inputFields = cardSearchForm.querySelectorAll("input")
+    const selectFields = cardSearchForm.querySelectorAll("select")
+    cardSearchForm.addEventListener("submit", (e) => {
+        e.preventDefault()
+        searchCards(searchCardGrid, userCardGrid)
+    })
+    // for (const inputField of inputFields) {
+    //     inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid))
+    // }
+    for (const selectField of selectFields) {
+        selectField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid))
     }
 }
 
@@ -171,10 +180,10 @@ function enableDeckSave(saveDeckBtn, userCardGrid) {
 function initCardSearch() {
     const searchCardGrid = document.querySelector('.card-search-grid')
     const userCardGrid = document.querySelector('.deck-grid')
-    const inputFields = document.querySelectorAll(".card-search-form input, .card-search-form select")
+    const cardSearchForm = document.querySelector('.card-search-form')
     const exportBtns = document.querySelectorAll("a[data-export-type]")
     const saveDeckBtn = document.getElementById("saveDeckBtn")
-    enableCardSearch(searchCardGrid, userCardGrid, inputFields)
+    enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm)
     addOnClickToUserCards(userCardGrid)
     enableDeckExport(exportBtns, userCardGrid)
     if (saveDeckBtn != null) enableDeckSave(saveDeckBtn, userCardGrid)

@@ -79,6 +79,10 @@ a {
     color: var(--color-dark);
 }
 
+p a {
+    color: var(--color-teal);
+}
+
 a:hover {
     font-weight: bold;
 }

@@ -12,6 +12,10 @@ router.get('/', (req, res) => {
     return res.render('../views/index.ejs')
 })
 
+router.get('/about', (req, res) => {
+    return res.render('../views/about.ejs')
+})
+
 // need to send cards in the request body
 router.post('/make-deck/:type', async (req, res) => {
 
