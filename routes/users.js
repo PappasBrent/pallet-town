@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
 async function sendPasswordResetEmail(req, email, token) {
     const baseUrl = `${req.protocol}://${req.get('host')}`
     const resetLink = `${baseUrl}/users/resetPassword/${token}`
-    const testAccount = await nodemailer.createTestAccount()
+    // const testAccount = await nodemailer.createTestAccount()
     // const transporter = nodemailer.createTransport({
     //     host: "smtp.ethereal.email",
     //     port: 587,
