@@ -48,11 +48,8 @@ async function sendPasswordResetEmail(req, email, token) {
     //     }
     // });
 
-    // TODO: Test transporter when SendPulse account has finished review
     const transporter = nodemailer.createTransport({
-        service: "SendPulse",
-        port: 465,
-        secure: true,
+        service: "Gmail",
         auth: {
             user: process.env.MAIL_USERNAME,
             pass: process.env.MAIL_PASSWORD
@@ -60,7 +57,7 @@ async function sendPasswordResetEmail(req, email, token) {
     });
     // send mail with defined transport object
     const info = await transporter.sendMail({
-        from: '"Pallet Town" <delibird@pallet-town.me>', // sender address
+        from: '"Pallet Town" <pallettowndelibird@gmail.com>', // sender address
         to: `${email}`, // list of receivers
         subject: "Pallet Town Password Reset Request", // Subject line
         html: `<p>Hi there!
@@ -193,11 +190,17 @@ router.post('/requestPasswordReset', forwardAuthenticated, async (req, res) => {
     })
     userRequested.passwordResetToken = passwordResetToken
     await userRequested.save()
-    sendPasswordResetEmail(req, email, passwordResetToken)
-    req.flash('successMessage', 'An email was sent to your account; click the link supplied in it to reset your password')
-    console.log(userRequested);
+    try {
+        await sendPasswordResetEmail(req, email, passwordResetToken)
+        req.flash('successMessage', 'An email was sent to your account; click the link supplied in it to reset your password')
+        return res.redirect('/users/login')
 
-    return res.redirect('/users/login')
+    } catch (error) {
+        console.log(error);
+        req.flash('errorMessage', 'Something went wrong, no email was sent :(')
+        return res.redirect('/users/requestPasswordReset')
+    }
+
 })
 
 // attempt to view reset password form

@@ -49,6 +49,25 @@ body {
     font-size: smaller;
 }
 
+*[data-tooltip] {
+    position: relative;
+}
+
+*[data-tooltip]:hover::after {
+    box-sizing: border-box;
+    line-height: 1.5;
+    font-size: 0.6rem;
+    content: attr(data-tooltip);
+    position: absolute;
+    width: 15rem;
+    padding: 0.5rem;
+    border-radius: 0.2rem;
+    left: 0;
+    bottom: 1rem;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+}
+
 body,
 main,
 footer {
