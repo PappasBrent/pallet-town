@@ -181,6 +181,7 @@ async function makeDeckImage(baseUrl, cards) {
                 await downloadImage(card.imageUrl, cardPath)
             } catch (error) {
                 rejectOuter(error)
+                break
             }
             cardPaths.push(cardPath)
         }
