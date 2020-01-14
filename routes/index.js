@@ -178,7 +178,8 @@ async function makeDeckImage(baseUrl, cards) {
             const cardPath = path.join("public", "cards", '~' + uuidv4() + '.png')
             console.log(card.name, cardPath);
             try {
-                await downloadImage(card.imageUrl, cardPath)
+                // have to account for imageUrl property of dataset being renamed to lowercase
+                await downloadImage(card.imageUrl != null ? card.imageUrl : card.imageurl, cardPath)
             } catch (error) {
                 console.log(error);
                 rejectOuter(error)
