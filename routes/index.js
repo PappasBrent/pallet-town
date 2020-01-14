@@ -8,6 +8,8 @@ import uuidv1 from 'uuid/v1'
 import uuidv4 from 'uuid/v4'
 import url from 'url'
 
+// TODO: Make cards directory if not present!
+
 router.get('/', (req, res) => {
     return res.render('../views/index.ejs')
 })
