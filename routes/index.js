@@ -182,7 +182,6 @@ async function makeDeckImage(baseUrl, cards) {
             } catch (error) {
                 console.log(error);
                 rejectOuter(error)
-                break
             }
             cardPaths.push(cardPath)
         }
