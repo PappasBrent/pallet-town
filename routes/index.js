@@ -148,7 +148,8 @@ async function makeDeckJson(cards, imageUrl) {
         } catch (error) {
             reject(error)
         }
-        return resolve(downloadHref)
+        // make sure relative to root web directory
+        return resolve('/' + downloadHref)
     })
 }
 
@@ -233,7 +234,8 @@ async function makeDecklistText(cards) {
         } catch (error) {
             reject(error)
         }
-        resolve(downloadHref)
+        // make sure relative to root web directory
+        resolve('/' + downloadHref)
     })
 }
 
