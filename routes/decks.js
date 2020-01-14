@@ -1,7 +1,7 @@
 import express from 'express'
 const router = express.Router()
-import Deck from '../models/deck'
-import User from '../models/user'
+import Deck from '../models/Deck'
+import User from '../models/User'
 import {
     ensureAuthenticated
 } from '../config/auth'
