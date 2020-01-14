@@ -227,7 +227,7 @@ async function makeDecklistText(cards) {
         try {
             let deckList = ""
             for (const card of cards) {
-                deckList += `${card.count} ${card.name} ${card.setCode.toUpperCase()} ${card.number}\n`
+                deckList += `${card.count} ${card.name} ${card.setCode != null ? card.setCode.toUpperCase() : card.setcode.toUpperCase()} ${card.number}\n`
             }
             fs.writeFileSync(absPath, deckList)
         } catch (error) {
