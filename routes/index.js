@@ -180,6 +180,7 @@ async function makeDeckImage(baseUrl, cards) {
             try {
                 await downloadImage(card.imageUrl, cardPath)
             } catch (error) {
+                console.log(error);
                 rejectOuter(error)
                 break
             }
