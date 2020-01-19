@@ -138,8 +138,8 @@ async function makeDeckJson(cards, imageUrl) {
             }
             for (let j = 0; j < card.count; j++) {
                 ContainedObjects.push(cardJson)
+                DeckIDs.push(cardId)
             }
-            DeckIDs.push(cardId)
         })
         deckJson.ObjectStates[0]["ContainedObjects"] = ContainedObjects
         deckJson.ObjectStates[0]["DeckIDs"] = DeckIDs
