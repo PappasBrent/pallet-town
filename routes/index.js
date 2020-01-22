@@ -167,7 +167,7 @@ async function makeDeckImage(baseUrl, cards) {
         const cardWidth = 341
         // actual pokemon card aspect ratio in cm
         const cardAspectRatio = 6.3 / 8.8
-        const cardHeight = cardWidth / cardAspectRatio
+        const cardHeight = Math.floor(cardWidth / cardAspectRatio)
         const numCardsPerRow = 10
         const numRows = 6
         const baseImageWidth = numCardsPerRow * cardWidth
