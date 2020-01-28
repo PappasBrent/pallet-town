@@ -13,6 +13,7 @@ import session from 'express-session'
 import passport from 'passport'
 import initializePassport from './config/passport-config'
 import methodOverride from 'method-override'
+import initializeAWS from './config/aws-config'
 
 // import routers
 import indexRouter from './routes/index'
@@ -27,6 +28,9 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+// aws
+initializeAWS()
 
 // passport
 initializePassport(passport)

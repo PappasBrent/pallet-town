@@ -1,4 +1,5 @@
 import express from 'express'
+import aws from 'aws-sdk'
 const router = express.Router()
 import fs from 'fs'
 import path from 'path'
@@ -7,6 +8,13 @@ import jimp from 'jimp'
 import uuidv1 from 'uuid/v1'
 import uuidv4 from 'uuid/v4'
 import url from 'url'
+
+// check development status
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
+const S3_BUCKET = process.env.S3_BUCKET
 
 // TODO: Make cards directory if not present!
 
@@ -54,6 +62,24 @@ router.post('/make-deck/:type', async (req, res) => {
         })
     }
 })
+
+async function upload(fileName, fileType, file) {
+
+    const s3Params = {
+        Bucket: S3_BUCKET,
+        Key: fileName,
+        // Expires: 60,
+        Body: file,
+        ContentType: fileType,
+        ACL: 'public-read'
+    };
+
+    const upload = new aws.S3.ManagedUpload({
+        params: s3Params
+    })
+
+    return await upload.promise()
+}
 
 function downloadImage(url, destPath) {
     return new Promise((resolve) => {
@@ -162,7 +188,7 @@ async function makeDeckImage(baseUrl, cards) {
         const ext = '.png'
         const absPath = generateFilePath(destDir, ext)
         const downloadHref = path.relative('public', absPath)
-        const deckJsonHref = new url.URL(downloadHref, baseUrl).toString()
+        // const deckJsonHref = new url.URL(downloadHref, baseUrl).toString()
 
         const cardWidth = 341
         // actual pokemon card aspect ratio in cm
@@ -192,7 +218,8 @@ async function makeDeckImage(baseUrl, cards) {
             await baseImg.composite(cardImg, x, y, [jimp.BLEND_DESTINATION_OVER, 0, 0])
         }
 
-        await new Promise((resolveInner) => {
+        const fn = uuidv4() + '.png'
+        const imgBuffer = await new Promise((resolveInner) => {
             try {
                 new jimp(baseImageWidth, baseImageHeight, 0x333333, async (err, baseImg) => {
                     if (err) throw (err)
@@ -204,13 +231,25 @@ async function makeDeckImage(baseUrl, cards) {
                         const y = Math.floor((i * cardWidth) / baseImageWidth) * cardHeight
                         placeCardOnImgAtPoint(baseImg, cardImg, x, y)
                     }
-                    await baseImg.writeAsync(absPath)
-                    resolveInner()
+                    // await baseImg.writeAsync(absPath)
+                    // await baseImg.writeAsync(fn)
+                    await baseImg.writeAsync('test.png')
+                    resolveInner(await baseImg.getBufferAsync(jimp.MIME_PNG))
                 })
             } catch (error) {
                 rejectOuter(error)
             }
         })
+
+        console.log(imgBuffer);
+
+
+        const data = await upload('test.png', jimp.MIME_PNG, imgBuffer)
+        console.log(data);
+
+        const deckJsonHref = data.Location
+        console.log(deckJsonHref);
+
 
         // delete downloaded cards since they are no longer needed
         cardPaths.forEach(cardPath => fs.unlinkSync(cardPath))

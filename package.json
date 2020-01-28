@@ -4,6 +4,7 @@
   "description": "A tool for creating decks of Pokemon cards and exporting them to Tabletop Simulator",
   "main": "index.js",
   "dependencies": {
+    "aws-sdk": "^2.610.0",
     "bcrypt": "^3.0.7",
     "connect-flash": "^0.1.1",
     "ejs": "^3.0.1",
