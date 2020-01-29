@@ -7,7 +7,6 @@ import request from 'request'
 import jimp from 'jimp'
 import uuidv1 from 'uuid/v1'
 import uuidv4 from 'uuid/v4'
-import url from 'url'
 
 // check development status
 if (process.env.NODE_ENV !== 'production') {
@@ -16,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const S3_BUCKET = process.env.S3_BUCKET
 
-// TODO: Make cards directory if not present!
+// TODO: Separate much of this functionality to an API router
 
 router.get('/', (req, res) => {
     return res.render('../views/index.ejs')
@@ -28,7 +27,6 @@ router.get('/about', (req, res) => {
 
 // need to send cards in the request body
 router.post('/make-deck/:type', async (req, res) => {
-
     const baseUrl = `${req.protocol}://${req.get('host')}`
     const cards = req.body.cards
     if (req.params.type === "tts") {
@@ -46,7 +44,7 @@ router.post('/make-deck/:type', async (req, res) => {
         }
     } else if (req.params.type === "txt") {
         try {
-            const txtFilePath = await makeDecklistText(cards)
+            const txtFilePath = await makeDeckListText(cards)
             return res.json({
                 'ok': true,
                 'downloadHref': txtFilePath
@@ -63,12 +61,11 @@ router.post('/make-deck/:type', async (req, res) => {
     }
 })
 
-async function upload(fileName, fileType, file) {
+async function uploadToAWS(fileName, fileType, file) {
 
     const s3Params = {
         Bucket: S3_BUCKET,
         Key: fileName,
-        // Expires: 60,
         Body: file,
         ContentType: fileType,
         ACL: 'public-read'
@@ -105,8 +102,12 @@ function generateFilePath(destDir, ext) {
     return absPath
 }
 
+// TODO: Sometimes get a network error when downloading file
+// need to make sure file is done being made before user can download it
+// actually may just be a quirk with nodemon restarting when changes are found
+// check in prod to be sure
 async function makeDeckJson(cards, imageUrl) {
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         const appPath = path.dirname(require.main.filename)
         const destDir = path.join(appPath, 'public', 'deck-jsons')
         const ext = '.json'
@@ -175,89 +176,77 @@ async function makeDeckJson(cards, imageUrl) {
             reject(error)
         }
         // make sure relative to root web directory
-        return resolve('/' + downloadHref)
+        resolve('/' + downloadHref)
     })
 }
 
 // have to return link to deck image
 // NOTE: liveserver must be OFF for this to work!
 async function makeDeckImage(baseUrl, cards) {
-    return await new Promise(async (resolveOuter, rejectOuter) => {
-        const appPath = path.dirname(require.main.filename)
-        const destDir = path.join(appPath, 'public', 'deck-images')
-        const ext = '.png'
-        const absPath = generateFilePath(destDir, ext)
-        const downloadHref = path.relative('public', absPath)
-        // const deckJsonHref = new url.URL(downloadHref, baseUrl).toString()
+    const cardWidth = 341
+    // actual pokemon card aspect ratio in cm
+    const cardAspectRatio = 6.3 / 8.8
+    const cardHeight = Math.floor(cardWidth / cardAspectRatio)
+    const numCardsPerRow = 10
+    const numRows = 6
+    const baseImageWidth = numCardsPerRow * cardWidth
+    const baseImageHeight = numRows * cardHeight
+    const cardPaths = []
 
-        const cardWidth = 341
-        // actual pokemon card aspect ratio in cm
-        const cardAspectRatio = 6.3 / 8.8
-        const cardHeight = Math.floor(cardWidth / cardAspectRatio)
-        const numCardsPerRow = 10
-        const numRows = 6
-        const baseImageWidth = numCardsPerRow * cardWidth
-        const baseImageHeight = numRows * cardHeight
+    // TODO: Move card downloading to a separate function
+    const cardDir = path.join("public", "cards")
+    if (!fs.existsSync(cardDir)) {
+        fs.mkdirSync(cardDir)
+    }
 
-        const cardPaths = []
-        // downloading cards for image creation
-        for (const card of cards) {
-            const cardPath = path.join("public", "cards", '~' + uuidv4() + '.png')
-            console.log(card.name, cardPath);
-            try {
-                // have to account for imageUrl property of dataset being renamed to lowercase
-                await downloadImage(card.imageUrl != null ? card.imageUrl : card.imageurl, cardPath)
-            } catch (error) {
-                console.log(error);
-                rejectOuter(error)
-            }
-            cardPaths.push(cardPath)
+    // downloading cards for image creation
+    for (const card of cards) {
+        const cardPath = path.join(cardDir, '~' + uuidv4() + '.png')
+        console.log(card.name, cardPath);
+        try {
+            // have to account for imageUrl property of dataset being renamed to lowercase
+            await downloadImage(card.imageUrlHiRes != null ? card.imageUrlHiRes : card.imageurlhires, cardPath)
+        } catch (error) {
+            console.log(error);
+            throw (error)
         }
+        cardPaths.push(cardPath)
+    }
 
-        async function placeCardOnImgAtPoint(baseImg, cardImg, x, y) {
-            await baseImg.composite(cardImg, x, y, [jimp.BLEND_DESTINATION_OVER, 0, 0])
+    async function placeCardOnImgAtPoint(baseImg, cardImg, x, y) {
+        await baseImg.composite(cardImg, x, y, [jimp.BLEND_DESTINATION_OVER, 0, 0])
+    }
+
+    const imgBuffer = await new Promise((resolve, reject) => {
+        try {
+            new jimp(baseImageWidth, baseImageHeight, 0x333333, async (err, baseImg) => {
+                if (err) throw (err)
+                for (let i = 0; i < cardPaths.length; i++) {
+                    const cardPath = cardPaths[i];
+                    const cardImg = await jimp.read(cardPath)
+                    cardImg.resize(cardWidth, cardHeight)
+                    const x = (i * cardWidth) % baseImageWidth
+                    const y = Math.floor((i * cardWidth) / baseImageWidth) * cardHeight
+                    placeCardOnImgAtPoint(baseImg, cardImg, x, y)
+                }
+                resolve(await baseImg.getBufferAsync(jimp.MIME_PNG))
+            })
+        } catch (error) {
+            reject(error)
         }
-
-        const fn = uuidv4() + '.png'
-        const imgBuffer = await new Promise((resolveInner) => {
-            try {
-                new jimp(baseImageWidth, baseImageHeight, 0x333333, async (err, baseImg) => {
-                    if (err) throw (err)
-                    for (let i = 0; i < cardPaths.length; i++) {
-                        const cardPath = cardPaths[i];
-                        const cardImg = await jimp.read(cardPath)
-                        cardImg.resize(cardWidth, cardHeight)
-                        const x = (i * cardWidth) % baseImageWidth
-                        const y = Math.floor((i * cardWidth) / baseImageWidth) * cardHeight
-                        placeCardOnImgAtPoint(baseImg, cardImg, x, y)
-                    }
-                    // await baseImg.writeAsync(absPath)
-                    // await baseImg.writeAsync(fn)
-                    await baseImg.writeAsync('test.png')
-                    resolveInner(await baseImg.getBufferAsync(jimp.MIME_PNG))
-                })
-            } catch (error) {
-                rejectOuter(error)
-            }
-        })
-
-        console.log(imgBuffer);
-
-
-        const data = await upload('test.png', jimp.MIME_PNG, imgBuffer)
-        console.log(data);
-
-        const deckJsonHref = data.Location
-        console.log(deckJsonHref);
-
-
-        // delete downloaded cards since they are no longer needed
-        cardPaths.forEach(cardPath => fs.unlinkSync(cardPath))
-        resolveOuter(deckJsonHref)
     })
+
+    const fileName = `${uuidv4()}.png`
+    // Note: don't actually have to download card since sending to AWS S3
+    const data = await uploadToAWS(fileName, jimp.MIME_PNG, imgBuffer)
+    const deckJsonHref = data.Location
+    // delete downloaded cards since they are no longer needed
+    // TODO: Move to function? Should if download becomes a function
+    cardPaths.forEach(cardPath => fs.unlinkSync(cardPath))
+    return deckJsonHref
 }
 
-async function makeDecklistText(cards) {
+async function makeDeckListText(cards) {
     return await new Promise((resolve, reject) => {
         const appPath = path.dirname(require.main.filename)
         const destDir = path.join(appPath, 'public', 'deck-txts')
