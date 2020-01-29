@@ -146,7 +146,7 @@ router.delete('/delete/:id', ensureAuthenticated, async (req, res) => {
         return res.status(500).redirect(`/decks/decksByUser/${req.user.id}`)
     }
 
-    req.flash("successMessage", "Successully deleted deck")
+    req.flash("successMessage", "Successfully deleted deck")
     return res.redirect(`/decks/decksByUser/${req.user.id}`)
 })
 
