@@ -81,7 +81,7 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
             if (parseInt(this.dataset.count) <= 0)
                 userCardGrid.removeChild(this)
         }
-        count += parseInt(this.dataset.count)
+        count += parseInt(cardImg.dataset.count)
     })
     cardCountDiv.dataset.count = count
 }
