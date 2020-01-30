@@ -13,11 +13,12 @@ function createCardImg(card) {
     return cardImg
 }
 
-function displayCards(searchCardGrid, userCardGrid, cards) {
+function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
     clearElement(searchCardGrid)
     cards.forEach(card => {
         const cardImg = createCardImg(card)
         cardImg.onclick = function () {
+            cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) + 1
             for (let i = 0; i < userCardGrid.children.length; i++) {
                 const existingCard = userCardGrid.children.item(i)
                 if (existingCard.style.backgroundImage === cardImg.style.backgroundImage) {
@@ -32,6 +33,7 @@ function displayCards(searchCardGrid, userCardGrid, cards) {
                 this.dataset.count = parseInt(this.dataset.count) - 1
                 if (parseInt(this.dataset.count) <= 0)
                     userCardGrid.removeChild(this)
+                cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
             }
             userCardGrid.appendChild(cardToAdd)
         }
@@ -40,7 +42,7 @@ function displayCards(searchCardGrid, userCardGrid, cards) {
 }
 
 // TODO: Paginate results
-async function searchCards(searchCardGrid, userCardGrid) {
+async function searchCards(searchCardGrid, userCardGrid, cardCountDiv) {
     clearElement(searchCardGrid)
     const formValues = {}
     formInputIds.forEach(id => formValues[id] = document.getElementById(id).value)
@@ -50,34 +52,38 @@ async function searchCards(searchCardGrid, userCardGrid) {
     // searchParams.set("pageSize", pageSize)
 
     const results = await fetch(apiURL + searchParams.toString()).then(res => res.json())
-    displayCards(searchCardGrid, userCardGrid, results.cards)
+    displayCards(searchCardGrid, userCardGrid, cardCountDiv, results.cards)
 }
 
-function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm) {
+function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv) {
     clearElement(searchCardGrid)
     const inputFields = cardSearchForm.querySelectorAll("input")
     const selectFields = cardSearchForm.querySelectorAll("select")
     cardSearchForm.addEventListener("submit", (e) => {
         e.preventDefault()
-        searchCards(searchCardGrid, userCardGrid)
+        searchCards(searchCardGrid, userCardGrid, cardCountDiv)
     })
     // for (const inputField of inputFields) {
-    //     inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid))
+    //     inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv))
     // }
     for (const selectField of selectFields) {
-        selectField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid))
+        selectField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv))
     }
 }
 
-function addOnClickToUserCards(userCardGrid) {
+function addOnClickToUserCards(userCardGrid, cardCountDiv) {
+    let count = 0
     const cardImgs = userCardGrid.querySelectorAll(".card")
     cardImgs.forEach(cardImg => {
         cardImg.onclick = function () {
+            cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
             this.dataset.count = parseInt(this.dataset.count) - 1
             if (parseInt(this.dataset.count) <= 0)
                 userCardGrid.removeChild(this)
         }
+        count += 1
     })
+    cardCountDiv.dataset.count = count
 }
 
 // TODO: Reset export when deck is modified
@@ -183,8 +189,9 @@ function initCardSearch() {
     const cardSearchForm = document.querySelector('.card-search-form')
     const exportBtns = document.querySelectorAll("a[data-export-type]")
     const saveDeckBtn = document.getElementById("saveDeckBtn")
-    enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm)
-    addOnClickToUserCards(userCardGrid)
+    const cardCountDiv = document.getElementById("card-count")
+    enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv)
+    addOnClickToUserCards(userCardGrid, cardCountDiv)
     enableDeckExport(exportBtns, userCardGrid)
     if (saveDeckBtn != null) enableDeckSave(saveDeckBtn, userCardGrid)
 }

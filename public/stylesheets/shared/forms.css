@@ -88,3 +88,12 @@ form input:focus {
 .pokemon-type-field {
     grid-area: types;
 }
+
+[data-count]::after {
+    content: attr(data-count);
+}
+
+/* 60 cards in a standard deck */
+[data-count="60"]::after {
+    color: var(--color-success);
+}
