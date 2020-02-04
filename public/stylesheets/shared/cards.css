@@ -2,6 +2,8 @@
     --card-width: 200px;
     /* actual cards are 6.3cm x 8.8cm */
     --card-aspect-ratio: calc(6.3 / 8.8);
+    --card-margin-bottom: 2rem;
+    --card-count-font-size: 1rem;
 }
 
 /* should only have 2 children */
@@ -32,14 +34,18 @@
     position: relative;
 }
 
-.card::after {
+.card[data-count] {
+    margin-bottom: var(--card-margin-bottom);
+}
+
+.card[data-count]::after {
     content: attr(data-count);
-    font-size: 1.5rem;
+    font-size: var(--card-count-font-size);
     color: black;
     font-weight: 900;
     position: absolute;
     z-index: 10;
-    bottom: 0.2rem;
+    bottom: calc(-1.5*var(--card-count-font-size));
     right: 0.5rem;
 }
 

@@ -35,5 +35,6 @@
             <option value="water">Water</option>
         </select>
     </div>
-    <button hidden type="submit"></button>
+    <!-- can't just use the hidden attribute; will not work on iPhone on Safari -->
+    <button style="opacity: 0; cursor:initial" type="submit"></button>
 </form>

@@ -8,7 +8,7 @@ function clearElement(element) {
 function createCardImg(card) {
     const cardImg = document.createElement("div")
     cardImg.classList.add("card")
-    cardImg.style.backgroundImage = `url(${card.imageUrl})`
+    cardImg.style.backgroundImage = `url(${card.imageUrlHiRes})`
     for (const key in card) cardImg.dataset[key] = card[key];
     return cardImg
 }
