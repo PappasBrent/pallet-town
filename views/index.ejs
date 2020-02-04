@@ -12,14 +12,10 @@
             <!-- TOOD: Test this -->
             <% if (typeof(deck) != 'undefined') { %>
             <% deck.cards.forEach(card => { %>
-            <div class="card"
-                style="background-image: url('<%= card.imageUrl != null ? card.imageUrl : card.imageurl %>');"
-                <% for (const prop in card) {%>
-                    <% if (card.hasOwnProperty(prop)) { %>
-                    data-<%= prop %> = "<%= card[prop] %>"
-                    <% } %>
-                    <% } %>
-                >
+            <div class="card" style="background-image:
+                url('<%= card.imageUrlHiRes != null ? card.imageUrlHiRes : card.imageurlhires %>');"
+                <% for (const prop in card) {%> <% if (card.hasOwnProperty(prop)) { %>
+                data-<%= prop %>="<%= card[prop] %>" <% } %> <% } %>>
             </div>
             <% }) %>
             <% } %>

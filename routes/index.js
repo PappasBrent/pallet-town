@@ -204,7 +204,7 @@ async function makeDeckImage(baseUrl, cards) {
         const cardPath = path.join(cardDir, '~' + uuidv4() + '.png')
         console.log(card.name, cardPath);
         try {
-            // have to account for imageUrl property of dataset being renamed to lowercase
+            // have to account for imageUrlHiRes property of dataset being renamed to lowercase
             await downloadImage(card.imageUrlHiRes != null ? card.imageUrlHiRes : card.imageurlhires, cardPath)
         } catch (error) {
             console.log(error);
