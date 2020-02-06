@@ -4,11 +4,10 @@
     <% decks.forEach(deck => { %>
     <a href="/decks/edit/<%= deck.id %>"><%= deck.name %>
         <% if (deck.cards.length > 0) { %>
-        <div class="card"
-            style="background-image:
-            url('<%=deck.cards[0].imageUrlHiRes != null ? deck.cards[0].imageUrlHiRes : deck.cards[0].imageurlhires%>')" alt=""></div>
-        </div>
-        <% } %>
-    </a>
-    <% }) %>
+        <div class="card" style="background-image:
+            url('<%=deck.cards[0].imageurlhires%>')" alt=""></div>
+</div>
+<% } %>
+</a>
+<% }) %>
 </div>

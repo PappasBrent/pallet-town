@@ -204,8 +204,7 @@ async function makeDeckImage(baseUrl, cards) {
         const cardPath = path.join(cardDir, '~' + uuidv4() + '.png')
         console.log(card.name, cardPath);
         try {
-            // have to account for imageUrlHiRes property of dataset being renamed to lowercase
-            await downloadImage(card.imageUrlHiRes != null ? card.imageUrlHiRes : card.imageurlhires, cardPath)
+            await downloadImage(card.imageurlhires, cardPath)
         } catch (error) {
             console.log(error);
             throw (error)
@@ -256,7 +255,7 @@ async function makeDeckListText(cards) {
         try {
             let deckList = ""
             for (const card of cards) {
-                deckList += `${card.count} ${card.name} ${card.setCode != null ? card.setCode.toUpperCase() : card.setcode.toUpperCase()} ${card.number}\n`
+                deckList += `${card.count} ${card.name} ${card.setcode.toUpperCase()} ${card.number}\n`
             }
             fs.writeFileSync(absPath, deckList)
         } catch (error) {

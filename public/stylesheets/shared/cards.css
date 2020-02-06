@@ -2,6 +2,7 @@
     --card-width: 200px;
     /* actual cards are 6.3cm x 8.8cm */
     --card-aspect-ratio: calc(6.3 / 8.8);
+    --card-height: calc(var(--card-width) / var(--card-aspect-ratio));
     --card-margin-bottom: 2rem;
     --card-count-font-size: 1rem;
 }
@@ -28,7 +29,7 @@
 .card {
     margin: 0.2rem;
     width: var(--card-width);
-    height: calc(var(--card-width) / var(--card-aspect-ratio));
+    height: var(--card-height);
     background-position-x: center;
     background-size: cover;
     position: relative;
@@ -50,4 +51,27 @@
 }
 
 /* TODO: Add some sort of image preview class */
-.preview {}
+.preview {
+    position: fixed;
+    width: calc(var(--card-width)*2);
+    height: calc(var(--card-height)*2);
+    top: 0;
+    background-size: cover;
+    z-index: 20;
+}
+
+.preview[data-visibility="hidden"] {
+    visibility: hidden;
+}
+
+.preview[data-visibility="visible"] {
+    visibility: visible;
+}
+
+.preview[data-side="left"] {
+    left: 0
+}
+
+.preview[data-side="right"] {
+    right: 0
+}

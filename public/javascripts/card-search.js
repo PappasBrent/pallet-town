@@ -5,11 +5,27 @@ function clearElement(element) {
     while (element.firstChild) element.removeChild(element.firstChild)
 }
 
+function addPreviewMouseOver(cardImg) {
+    // if card has count data attribute, then it is in the user's deck
+    // and is on the right side of the screen
+    cardImg.onmouseover = () => {
+        const cardPreview = document.querySelector(`.preview[data-side=${typeof(cardImg.dataset['count']) == 'undefined' ? 'right' : 'left'}]`)
+        cardPreview.dataset.visibility = "visible";
+        cardPreview.style.backgroundImage = `url(${cardImg.dataset.imageurlhires})`
+    }
+    cardImg.onmouseleave = () => {
+        const cardPreview = document.querySelector(`.preview[data-side=${typeof(cardImg.dataset['count']) == 'undefined' ? 'right' : 'left'}]`)
+        cardPreview.dataset.visibility = "hidden"
+        cardPreview.style.backgroundImage = null
+    }
+}
+
 function createCardImg(card) {
     const cardImg = document.createElement("div")
     cardImg.classList.add("card")
     cardImg.style.backgroundImage = `url(${card.imageUrlHiRes})`
-    for (const key in card) cardImg.dataset[key] = card[key];
+    addPreviewMouseOver(cardImg)
+    for (const key in card) cardImg.dataset[key.toLowerCase()] = card[key];
     return cardImg
 }
 
@@ -81,6 +97,7 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
             if (parseInt(this.dataset.count) <= 0)
                 userCardGrid.removeChild(this)
         }
+        addPreviewMouseOver(cardImg)
         count += parseInt(cardImg.dataset.count)
     })
     cardCountDiv.dataset.count = count
