@@ -51,7 +51,8 @@ router.post('/make-deck/:type', async (req, res) => {
             })
         } catch (error) {
             return res.status(500).json({
-                "ok": false
+                "ok": false,
+                "errorMessage": error
             })
         }
     } else {
@@ -183,6 +184,12 @@ async function makeDeckJson(cards, imageUrl) {
 // have to return link to deck image
 // NOTE: liveserver must be OFF for this to work!
 async function makeDeckImage(baseUrl, cards) {
+
+    // check if there is a correct amount of cards
+    if ((cards.length <= 1) || (cards.length >= 60)) {
+        throw "Deck must consist at least 2 and no more than 59 unique cards"
+    }
+
     const cardWidth = 341
     // actual pokemon card aspect ratio in cm
     const cardAspectRatio = 6.3 / 8.8
