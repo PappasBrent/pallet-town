@@ -41,6 +41,7 @@ function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
                     existingCard.dataset.count = parseInt(existingCard.dataset.count) + 1
                     return
                 }
+                enableDeckExport(userCardGrid)
             }
 
             const cardToAdd = createCardImg(card)
@@ -50,6 +51,7 @@ function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
                 if (parseInt(this.dataset.count) <= 0)
                     userCardGrid.removeChild(this)
                 cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
+                enableDeckExport(userCardGrid)
             }
             userCardGrid.appendChild(cardToAdd)
         }
@@ -91,11 +93,13 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
     let count = 0
     const cardImgs = userCardGrid.querySelectorAll(".card")
     cardImgs.forEach(cardImg => {
+        // todo: Make this onclick into a function since it used in displayCards as well
         cardImg.onclick = function () {
-            cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
             this.dataset.count = parseInt(this.dataset.count) - 1
             if (parseInt(this.dataset.count) <= 0)
                 userCardGrid.removeChild(this)
+            cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
+            enableDeckExport(userCardGrid)
         }
         addPreviewMouseOver(cardImg)
         count += parseInt(cardImg.dataset.count)
@@ -104,10 +108,20 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
 }
 
 // TODO: Reset export when deck is modified
-function enableDeckExport(exportBtns, userCardGrid) {
+function enableDeckExport(userCardGrid) {
+    const exportBtns = document.querySelectorAll("a[data-export-type]")
     const reqBase = `${window.location.protocol}//${window.location.host}`
+    // TODO: use a closure or something to save the value of the export message, then restore it upon deck export enable
+    // instead of directly setting it like this
+    const exportTypeMsg = {
+        "tts": "Export to Tabletop",
+        "txt": "Export deck list to text file"
+    }
     for (const exportBtn of exportBtns) {
+        exportBtn.removeAttribute("download")
         exportBtn.dataset.clicked = "false"
+        exportBtn.setAttribute("href", "#")
+        exportBtn.innerText = exportTypeMsg[exportBtn.dataset.exportType]
         exportBtn.onclick = async function () {
             if (this.dataset.clicked === "true") return
             this.dataset.clicked = "true"
@@ -205,12 +219,11 @@ function initCardSearch() {
     const searchCardGrid = document.querySelector('.card-search-grid')
     const userCardGrid = document.querySelector('.deck-grid')
     const cardSearchForm = document.querySelector('.card-search-form')
-    const exportBtns = document.querySelectorAll("a[data-export-type]")
     const saveDeckBtn = document.getElementById("saveDeckBtn")
     const cardCountDiv = document.getElementById("card-count")
     enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv)
     addOnClickToUserCards(userCardGrid, cardCountDiv)
-    enableDeckExport(exportBtns, userCardGrid)
+    enableDeckExport(userCardGrid)
     if (saveDeckBtn != null) enableDeckSave(saveDeckBtn, userCardGrid)
 }
 
