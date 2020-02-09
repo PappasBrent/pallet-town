@@ -50,7 +50,6 @@
     right: 0.5rem;
 }
 
-/* TODO: Add some sort of image preview class */
 .preview {
     position: fixed;
     width: calc(var(--card-width)*2);

@@ -35,21 +35,24 @@ function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
         const cardImg = createCardImg(card)
         cardImg.onclick = function () {
             cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) + 1
+            enableDeckExport(userCardGrid)
             for (let i = 0; i < userCardGrid.children.length; i++) {
                 const existingCard = userCardGrid.children.item(i)
                 if (existingCard.style.backgroundImage === cardImg.style.backgroundImage) {
                     existingCard.dataset.count = parseInt(existingCard.dataset.count) + 1
                     return
                 }
-                enableDeckExport(userCardGrid)
             }
 
             const cardToAdd = createCardImg(card)
             cardToAdd.dataset.count = '1'
             cardToAdd.onclick = function () {
                 this.dataset.count = parseInt(this.dataset.count) - 1
-                if (parseInt(this.dataset.count) <= 0)
+                if (parseInt(this.dataset.count) <= 0) {
+                    // dispatch to remove preview
+                    this.dispatchEvent(new MouseEvent("mouseleave"))
                     userCardGrid.removeChild(this)
+                }
                 cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
                 enableDeckExport(userCardGrid)
             }
@@ -96,8 +99,11 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
         // todo: Make this onclick into a function since it used in displayCards as well
         cardImg.onclick = function () {
             this.dataset.count = parseInt(this.dataset.count) - 1
-            if (parseInt(this.dataset.count) <= 0)
+            if (parseInt(this.dataset.count) <= 0) {
+                // dispatch to remove preview
+                this.dispatchEvent(new MouseEvent("mouseleave"))
                 userCardGrid.removeChild(this)
+            }
             cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
             enableDeckExport(userCardGrid)
         }
@@ -107,7 +113,6 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
     cardCountDiv.dataset.count = count
 }
 
-// TODO: Reset export when deck is modified
 function enableDeckExport(userCardGrid) {
     const exportBtns = document.querySelectorAll("a[data-export-type]")
     const reqBase = `${window.location.protocol}//${window.location.host}`
@@ -118,10 +123,13 @@ function enableDeckExport(userCardGrid) {
         "txt": "Export deck list to text file"
     }
     for (const exportBtn of exportBtns) {
+        const exportType = exportBtn.dataset.exportType
+        exportBtn.classList.remove("btn-warning")
+        exportBtn.classList.add("btn-info")
         exportBtn.removeAttribute("download")
         exportBtn.dataset.clicked = "false"
         exportBtn.setAttribute("href", "#")
-        exportBtn.innerText = exportTypeMsg[exportBtn.dataset.exportType]
+        exportBtn.innerText = exportTypeMsg[exportType]
         exportBtn.onclick = async function () {
             if (this.dataset.clicked === "true") return
             this.dataset.clicked = "true"
@@ -132,10 +140,18 @@ function enableDeckExport(userCardGrid) {
                 ...cardDiv.dataset
             }))
 
+            // check for correct number of unique cards
+            if (exportType === 'tts' && ((cards.length <= 1) || (cards.length >= 60))) {
+                this.innerText = "Deck must have at least 2 and no more than 59 unique cards if exporting to tabletop"
+                this.classList.remove("btn-info")
+                this.classList.add("btn-warning")
+                return
+            }
+
             this.innerText = "Loading..."
 
             try {
-                const res = await fetch(`${reqBase}/make-deck/${exportBtn.dataset.exportType}`, {
+                const res = await fetch(`${reqBase}/make-deck/${exportType}`, {
                     method: "POST",
                     headers: new Headers({
                         "Content-Type": "application/json"
@@ -147,6 +163,8 @@ function enableDeckExport(userCardGrid) {
                 const resJson = await res.json()
                 if (!resJson.ok) {
                     this.innerText = "Error"
+                    this.classList.remove("btn-info")
+                    this.classList.add("btn-warning")
                     return
                 } else {
                     const deckName = document.getElementById("deckName").value
