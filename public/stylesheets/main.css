@@ -102,6 +102,14 @@ p a {
     color: var(--color-teal);
 }
 
+.about a {
+    color: var(--color-teal);
+}
+
 a:hover {
     font-weight: bold;
+}
+
+.container {
+    width: 75%;
 }
