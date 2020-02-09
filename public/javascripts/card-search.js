@@ -135,10 +135,11 @@ function enableDeckExport(exportBtns, userCardGrid) {
                     this.innerText = "Error"
                     return
                 } else {
+                    const deckName = document.getElementById("deckName").value
                     const downloadHref = resJson.downloadHref
                     this.innerText = "Download now!"
                     this.setAttribute('href', downloadHref)
-                    this.setAttribute('download', '')
+                    this.setAttribute('download', deckName.trim())
                 }
             } catch (error) {
                 console.log(error)
