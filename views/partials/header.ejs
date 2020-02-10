@@ -12,6 +12,7 @@
             <% if ( currentUser == null ) { %>
             <li><a href="/users/login">Login</a></li>
             <li><a href="/users/register">Register</a></li>
+            <li><a href="/decks/decksByUser/">My Decks</a></li>
             <% } else {%>
             <li><a href="/decks/decksByUser/<%= currentUser.id %>">My Decks</a></li>
             <li><a href="/users/<%= currentUser.id %>">My Account</a></li>
