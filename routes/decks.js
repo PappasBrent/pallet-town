@@ -150,6 +150,11 @@ router.delete('/delete/:id', ensureAuthenticated, async (req, res) => {
     return res.redirect(`/decks/decksByUser/${req.user.id}`)
 })
 
+// get decks by user that is not logged in 
+router.get('/decksByUser', async (req, res) => {
+    return res.render("../views/decks/decks.ejs", {})
+})
+
 // look up all decks by a user
 // TODO: Remove need for authentication
 router.get('/decksByUser/:userId', ensureAuthenticated, async (req, res) => {
