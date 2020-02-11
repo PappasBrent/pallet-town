@@ -1,5 +1,7 @@
 const formInputIds = ["name", "set", "supertype", "types"]
 const pageSize = 12
+// have to find some way to save anonymous decks, I don't like using globals tho
+let originalDeckName = ''
 
 function clearElement(element) {
     while (element.firstChild) element.removeChild(element.firstChild)
@@ -29,13 +31,13 @@ function createCardImg(card) {
     return cardImg
 }
 
-function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
+function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards, saveDeckBtn) {
     clearElement(searchCardGrid)
     cards.forEach(card => {
         const cardImg = createCardImg(card)
         cardImg.onclick = function () {
             cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) + 1
-            enableDeckExport(userCardGrid)
+            enableDeckExport(saveDeckBtn, userCardGrid)
             for (let i = 0; i < userCardGrid.children.length; i++) {
                 const existingCard = userCardGrid.children.item(i)
                 if (existingCard.style.backgroundImage === cardImg.style.backgroundImage) {
@@ -54,7 +56,7 @@ function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
                     userCardGrid.removeChild(this)
                 }
                 cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
-                enableDeckExport(userCardGrid)
+                enableDeckExport(saveDeckBtn, userCardGrid)
             }
             userCardGrid.appendChild(cardToAdd)
         }
@@ -63,7 +65,7 @@ function displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards) {
 }
 
 // TODO: Paginate results
-async function searchCards(searchCardGrid, userCardGrid, cardCountDiv) {
+async function searchCards(searchCardGrid, userCardGrid, cardCountDiv, saveDeckBtn) {
     clearElement(searchCardGrid)
     const formValues = {}
     formInputIds.forEach(id => formValues[id] = document.getElementById(id).value)
@@ -73,26 +75,26 @@ async function searchCards(searchCardGrid, userCardGrid, cardCountDiv) {
     // searchParams.set("pageSize", pageSize)
 
     const results = await fetch(apiURL + searchParams.toString()).then(res => res.json())
-    displayCards(searchCardGrid, userCardGrid, cardCountDiv, results.cards)
+    displayCards(searchCardGrid, userCardGrid, cardCountDiv, results.cards, saveDeckBtn)
 }
 
-function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv) {
+function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv, saveDeckBtn) {
     clearElement(searchCardGrid)
     const inputFields = cardSearchForm.querySelectorAll("input")
     const selectFields = cardSearchForm.querySelectorAll("select")
     cardSearchForm.addEventListener("submit", (e) => {
         e.preventDefault()
-        searchCards(searchCardGrid, userCardGrid, cardCountDiv)
+        searchCards(searchCardGrid, userCardGrid, cardCountDiv, saveDeckBtn)
     })
     // for (const inputField of inputFields) {
-    //     inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv))
+    //     inputField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv,))
     // }
     for (const selectField of selectFields) {
-        selectField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv))
+        selectField.addEventListener("input", () => searchCards(searchCardGrid, userCardGrid, cardCountDiv, saveDeckBtn))
     }
 }
 
-function addOnClickToUserCards(userCardGrid, cardCountDiv) {
+function addOnClickToUserCards(userCardGrid, cardCountDiv, saveDeckBtn) {
     let count = 0
     const cardImgs = userCardGrid.querySelectorAll(".card")
     cardImgs.forEach(cardImg => {
@@ -105,7 +107,7 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
                 userCardGrid.removeChild(this)
             }
             cardCountDiv.dataset.count = parseInt(cardCountDiv.dataset.count) - 1
-            enableDeckExport(userCardGrid)
+            enableDeckExport(saveDeckBtn, userCardGrid)
         }
         addPreviewMouseOver(cardImg)
         count += parseInt(cardImg.dataset.count)
@@ -113,7 +115,7 @@ function addOnClickToUserCards(userCardGrid, cardCountDiv) {
     cardCountDiv.dataset.count = count
 }
 
-function enableDeckExport(userCardGrid) {
+function enableDeckExport(saveDeckBtn, userCardGrid) {
     const exportBtns = document.querySelectorAll("a[data-export-type]")
     const reqBase = `${window.location.protocol}//${window.location.host}`
     // TODO: use a closure or something to save the value of the export message, then restore it upon deck export enable
@@ -178,10 +180,16 @@ function enableDeckExport(userCardGrid) {
             }
         }
     }
+    // putting this here will do for now
+    const deckNameInput = document.getElementById('deckName')
+    deckNameInput.oninput = enableDeckSave(saveDeckBtn, userCardGrid)
 }
 
 function enableDeckSave(saveDeckBtn, userCardGrid) {
     const reqBase = `${window.location.protocol}//${window.location.host}`
+    saveDeckBtn.classList.remove("btn-warning")
+    saveDeckBtn.classList.add("btn-info")
+    saveDeckBtn.innerText = "Save deck"
     saveDeckBtn.onclick = async function () {
         const cardDivs = userCardGrid.querySelectorAll(".card")
         const cards = []
@@ -190,6 +198,36 @@ function enableDeckSave(saveDeckBtn, userCardGrid) {
             ...cardDiv.dataset
         }))
         const deckName = document.getElementById("deckName").value
+
+        // check if saving anonymously via localStorage, return out early when done
+        if (saveDeckBtn.dataset.saveType === 'localStorage') {
+            if (deckName === '') {
+                this.classList.remove('btn-info')
+                this.classList.add('btn-warning')
+                this.innerText = 'Please enter non-empty deck name'
+                return
+            }
+            const savedDecks = JSON.parse(localStorage.getItem('decks') || '[]')
+            const deckToEdit = {
+                deckName,
+                cards
+            }
+            const deckToReplaceIndex = savedDecks.findIndex(deck => deck.deckName === originalDeckName)
+            if (deckToReplaceIndex != -1) {
+                savedDecks.splice(deckToReplaceIndex, 1)
+            }
+            savedDecks.push(deckToEdit)
+
+            localStorage.setItem('decks', JSON.stringify(savedDecks))
+
+            // end it here
+            originalDeckName = deckName // update saved deck name
+            this.innerText = "Deck saved!"
+            this.classList.remove('btn-warning')
+            this.classList.add('btn-info')
+            return
+        }
+
 
         let deckId = null
         if (saveDeckBtn.dataset.saveType === 'edit') {
@@ -233,16 +271,54 @@ function enableDeckSave(saveDeckBtn, userCardGrid) {
     }
 }
 
+function loadLocalStorageDecks(userCardGrid) {
+    const deckToEdit = JSON.parse(localStorage.getItem('deckToEdit') || '{deckName:"",cards:[]}')
+    originalDeckName = deckToEdit.deckName
+    document.getElementById('deckName').value = originalDeckName
+    for (const card of deckToEdit.cards) {
+        const cardDiv = document.createElement('DIV')
+        cardDiv.classList.add('card')
+        cardDiv.style.backgroundImage = `url(${card.imageurlhires})`
+        for (const prop in card) {
+            cardDiv.dataset[prop] = card[prop]
+        }
+        userCardGrid.appendChild(cardDiv)
+    }
+}
+
+function enableLocalStorageDeckDelete(deleteDeckBtn) {
+    deleteDeckBtn.onclick = function (e) {
+        e.preventDefault()
+        const savedDecks = JSON.parse(localStorage.getItem('decks') || '[]')
+        const deckToRemoveIndex = savedDecks.findIndex(deck => deck.deckName === originalDeckName)
+        if (deckToRemoveIndex != -1) {
+            savedDecks.splice(deckToRemoveIndex, 1)
+        }
+        localStorage.setItem('decks', JSON.stringify(savedDecks))
+        window.location.href = '/decks/decksByUser'
+    }
+}
+
 function initCardSearch() {
     const searchCardGrid = document.querySelector('.card-search-grid')
     const userCardGrid = document.querySelector('.deck-grid')
     const cardSearchForm = document.querySelector('.card-search-form')
     const saveDeckBtn = document.getElementById("saveDeckBtn")
+    const deleteDeckBtn = document.getElementById('deleteDeckBtn')
     const cardCountDiv = document.getElementById("card-count")
-    enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv)
-    addOnClickToUserCards(userCardGrid, cardCountDiv)
-    enableDeckExport(userCardGrid)
-    if (saveDeckBtn != null) enableDeckSave(saveDeckBtn, userCardGrid)
+    enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv, saveDeckBtn)
+    enableDeckExport(saveDeckBtn, userCardGrid)
+    enableDeckSave(saveDeckBtn, userCardGrid)
+    // load anonymous decks
+    const href = window.location.href
+    if (href.endsWith('edit') || href.endsWith('edit/')) {
+        loadLocalStorageDecks(userCardGrid)
+        enableLocalStorageDeckDelete(deleteDeckBtn)
+    } else {
+        // if on a page with this script, must be editing a new deck
+        deleteDeckBtn.parentElement.removeChild(deleteDeckBtn)
+    }
+    addOnClickToUserCards(userCardGrid, cardCountDiv, saveDeckBtn)
 }
 
 if (document.readyState !== "loading") initCardSearch()

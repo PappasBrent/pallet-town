@@ -1,5 +1,5 @@
 <!-- form action should save the deck that the user made -->
-<form action="#" method="POST">
+<form id="deckExportForm" action="#" method="POST">
     <div class="form-field">
         <label for="deckName">Deck Name</label>
         <input type="text" name="deckName" id="deckName" value="<%= typeof (deck) != 'undefined' ? deck.name : ''%>">
@@ -13,13 +13,25 @@
             class="btn btn-warning" type="submit">Delete Deck</button>
         <% } %>
     </div>
+    <% } else { %>
+    <div class="btn-field align-text-left">
+        <button id="saveDeckBtn" data-save-type="localStorage" class="btn btn-info" type="button">Save Deck</button>
+        <a id="deleteDeckBtn" class="btn btn-warning">Delete deck</a>
+    </div>
     <% } %>
     <div class="btn-field align-text-left">
         <a class="btn btn-info export" data-export-type="tts" role="button" href="#">Export to Tabletop</a>
         <a class="btn btn-info export" data-export-type="txt" role="button" href="#">Export deck list to text file</a>
     </div>
 </form>
-
+<script>
+    const form = document.getElementById("deckExportForm")
+    const saveDeckBtn = document.getElementById('saveDeckBtn')
+    form.onsubmit = e => {
+        e.preventDefault()
+        return saveDeckBtn.click()
+    }
+</script>
 <div id="card-count" data-count="0">Card count: </div>
 <small class="btn " data-tooltip="If you have Tabletop Simulator installed, then simply drag the .json file into the following folder:
     C:\Users\YouUserNameHere\Documents\My Games\Tabletop Simulator\Saves\Saved Objects (this path is a bit different if you're not on Windows)
