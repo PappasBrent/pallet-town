@@ -280,7 +280,7 @@ function loadLocalStorageDecks(userCardGrid) {
         cardDiv.classList.add('card')
         cardDiv.style.backgroundImage = `url(${card.imageurlhires})`
         for (const prop in card) {
-            cardDiv.dataset[prop] = card[prop]
+            cardDiv.dataset[prop.toLowerCase()] = card[prop]
         }
         userCardGrid.appendChild(cardDiv)
     }

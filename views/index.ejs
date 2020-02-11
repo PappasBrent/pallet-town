@@ -13,7 +13,7 @@
             <% if (typeof(deck) != 'undefined') { %>
             <% deck.cards.forEach(card => { %>
             <div class="card" style="background-image:
-                    url('<%= card.imageUrlHiRes != null ? card.imageUrlHiRes : card.imageurlhires %>');"
+                    url('<%= card.imageurlhires %>');"
                 <% for (const prop in card) {%> <% if (card.hasOwnProperty(prop)) { %>
                 data-<%= prop %>="<%= card[prop] %>" <% } %> <% } %>>
             </div>
