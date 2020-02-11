@@ -55,6 +55,10 @@ router.post('/new', ensureAuthenticated, async (req, res) => {
     })
 })
 
+router.get('/edit', (req, res) => {
+    return res.render('../views/index.ejs')
+})
+
 router.get('/edit/:id', ensureAuthenticated, async (req, res) => {
     try {
         const deck = await Deck.findById(req.params.id)
