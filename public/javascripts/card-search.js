@@ -25,7 +25,7 @@ function addPreviewMouseOver(cardImg) {
 function createCardImg(card) {
     const cardImg = document.createElement("div")
     cardImg.classList.add("card")
-    cardImg.style.backgroundImage = `url(${card.imageUrlHiRes})`
+    cardImg.style.backgroundImage = `url(${card.imageUrl})`
     addPreviewMouseOver(cardImg)
     for (const key in card) cardImg.dataset[key.toLowerCase()] = card[key];
     return cardImg
@@ -278,7 +278,7 @@ function loadLocalStorageDecks(userCardGrid) {
     for (const card of deckToEdit.cards) {
         const cardDiv = document.createElement('DIV')
         cardDiv.classList.add('card')
-        cardDiv.style.backgroundImage = `url(${card.imageurlhires})`
+        cardDiv.style.backgroundImage = `url(${card.imageurl})`
         for (const prop in card) {
             cardDiv.dataset[prop.toLowerCase()] = card[prop]
         }

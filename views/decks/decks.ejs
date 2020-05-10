@@ -5,7 +5,7 @@
     <a href="/decks/edit/<%= deck.id %>"><%= deck.name %>
         <% if (deck.cards.length > 0) { %>
         <div class="card" style="background-image:
-            url('<%=deck.cards[0].imageurlhires%>')" alt=""></div>
+            url('<%=deck.cards[0].imageurl%>')" alt=""></div>
 </div>
 <% } %>
 </a>
@@ -34,7 +34,7 @@
         if (cards.length > 0) {
             const deckDiv = document.createElement('DIV')
             deckDiv.classList.add('card')
-            deckDiv.style.backgroundImage = `url(${cards[0].imageurlhires})`
+            deckDiv.style.backgroundImage = `url(${cards[0].imageurl})`
             a.appendChild(deckDiv)
         }
         deckGrid.appendChild(a)
