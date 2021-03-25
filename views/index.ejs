@@ -7,7 +7,7 @@
     </div>
     <div class="current-deck">
         <h2>Current deck</h2>
-        <%- include('./partials/deck_export_buttons.ejs') %>
+        <%- include('./partials/deck_export_buttons.ejs', {deck:deck}) %>
         <div class="card-grid deck-grid">
             <!-- TOOD: Test this -->
             <% if (typeof(deck) != 'undefined') { %>
