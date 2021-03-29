@@ -1,43 +1,42 @@
-<% if (typeof (user) != 'undefined') { %>
-<h2>Decks by <%= user.username %></h2>
-<div id="deckGrid" class="card-grid">
-    <% decks.forEach(deck => { %>
-    <a href="/decks/edit/<%= deck.id %>"><%= deck.name %>
-        <% if (deck.cards.length > 0) { %>
-        <div class="card" style="background-image:
-            url('<%=deck.cards[0].imageurl%>')" alt=""></div>
-</div>
-<% } %>
-</a>
-<% }) %>
-</div>
-<% } else { %>
-<h2>Decks by You</h2>
-<div id="deckGrid" class="card-grid">
-</div>
-<script>
-    const deckGrid = document.getElementById("deckGrid")
-    const savedDecks = JSON.parse(localStorage.getItem('decks') || '[]')
-    for (const deck of savedDecks) {
-        const {
-            deckName,
-            cards
-        } = deck
-        const a = document.createElement('A')
-        a.setAttribute('href', "/decks/edit")
-        a.innerText = deckName
-        a.onclick = function (e) {
-            e.preventDefault()
-            localStorage.setItem('deckToEdit', JSON.stringify(deck))
-            window.location.href = this.href
-        }
-        if (cards.length > 0) {
-            const deckDiv = document.createElement('DIV')
-            deckDiv.classList.add('card')
-            deckDiv.style.backgroundImage = `url(${cards[0].imageurl})`
-            a.appendChild(deckDiv)
-        }
-        deckGrid.appendChild(a)
-    }
-</script>
-<% } %>
+<% if (typeof (user) !='undefined' ) { %>
+    <h2>Decks by <%= user.username %>
+    </h2>
+    <div id="deckGrid" class="card-grid">
+        <% decks.forEach(deck=> { %>
+            <a href="/decks/edit/<%= deck.id %>">
+                <%= deck.name %>
+                    <% if (deck.cards.length> 0) { %>
+                        <div class="card" style="background-image:url('<%=deck.cards[0].imageurl%>')" alt=""></div>
+                        <% } %>
+            </a>
+            <% }) %>
+                <% } else { %>
+                    <h2>Decks by You</h2>
+                    <div id="deckGrid" class="card-grid">
+                    </div>
+                    <script>
+                        const deckGrid = document.getElementById("deckGrid")
+                        const savedDecks = JSON.parse(localStorage.getItem('decks') || '[]')
+                        for (const deck of savedDecks) {
+                            const {
+                                deckName,
+                                cards
+                            } = deck
+                            const a = document.createElement('A')
+                            a.setAttribute('href', "/decks/edit")
+                            a.innerText = deckName
+                            a.onclick = function (e) {
+                                e.preventDefault()
+                                localStorage.setItem('deckToEdit', JSON.stringify(deck))
+                                window.location.href = this.href
+                            }
+                            if (cards.length > 0) {
+                                const deckDiv = document.createElement('DIV')
+                                deckDiv.classList.add('card')
+                                deckDiv.style.backgroundImage = `url(${cards[0].imageurl})`
+                                a.appendChild(deckDiv)
+                            }
+                            deckGrid.appendChild(a)
+                        }
+                    </script>
+                    <% } %>
