@@ -25,9 +25,15 @@ function addPreviewMouseOver(cardImg) {
 function createCardImg(card) {
     const cardImg = document.createElement("div")
     cardImg.classList.add("card")
-    cardImg.style.backgroundImage = `url(${card.imageUrl})`
-    addPreviewMouseOver(cardImg)
+    
     for (const key in card) cardImg.dataset[key.toLowerCase()] = card[key];
+    // Backwards compatibility with when the site used v1 of the Pokemon TCG API
+    cardImg.dataset["imageurl"] = card.images.small
+    cardImg.dataset["imageurlhires"] = card.images.large
+    cardImg.dataset["setcode"] = card.set.ptcgoCode
+
+    cardImg.style.backgroundImage = `url(${cardImg.dataset["imageurl"]})`
+    addPreviewMouseOver(cardImg)
     return cardImg
 }
 
@@ -69,13 +75,28 @@ async function searchCards(searchCardGrid, userCardGrid, cardCountDiv, saveDeckB
     clearElement(searchCardGrid)
     const formValues = {}
     formInputIds.forEach(id => formValues[id] = document.getElementById(id).value)
-    const apiURL = "https://api.pokemontcg.io/v1/cards?"
+    const apiURL = "https://api.pokemontcg.io/v2/cards?q="
     if (["energy", "trainer"].includes(formValues["supertype"])) formValues["types"] = ''
-    let searchParams = new URLSearchParams(formValues)
-    // searchParams.set("pageSize", pageSize)
 
-    const results = await fetch(apiURL + searchParams.toString()).then(res => res.json())
-    displayCards(searchCardGrid, userCardGrid, cardCountDiv, results.cards, saveDeckBtn)
+    let query = ""
+    for (const key in formValues) {
+        if (Object.hasOwnProperty.call(formValues, key)) {
+            const element = formValues[key];
+            if (element.trim() != "") {
+                if (key == "set") {
+                    query += ` ${key}.name:"${element}"`
+                } else {
+                    query += ` ${key}:"${element}"`
+                }
+            }
+        }
+    }
+    query = query.trimLeft()
+    requestURL = apiURL + query
+
+    const results = await fetch(requestURL).then(res => res.json())
+    const cards = results.data
+    displayCards(searchCardGrid, userCardGrid, cardCountDiv, cards, saveDeckBtn)
 }
 
 function enableCardSearch(searchCardGrid, userCardGrid, cardSearchForm, cardCountDiv, saveDeckBtn) {
