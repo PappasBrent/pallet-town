@@ -4,34 +4,45 @@
         <label for="deckName">Deck Name</label>
         <input type="text" name="deckName" id="deckName" value="<%= typeof (deck) != 'undefined' ? deck.name : ''%>">
     </div>
-    <% if (currentUser != null) { %>
-    <div class="btn-field align-text-left">
-        <button id="saveDeckBtn" data-save-type=<%= typeof (deck) != 'undefined' ? "edit" : "new"%> class="btn btn-info"
-            type="button">Save Deck</button>
-        <% if (typeof (deck) != 'undefined') { %>
-        <button formmethod="POST" formaction="/decks/delete/<%= deck.id %>?_method=delete" id="deleteDeckBtn"
-            class="btn btn-warning" type="submit">Delete Deck</button>
-        <% } %>
-    </div>
-    <% } else { %>
-    <div class="btn-field align-text-left">
-        <button id="saveDeckBtn" data-save-type="localStorage" class="btn btn-info" type="button">Save Deck</button>
-        <a id="deleteDeckBtn" class="btn btn-warning">Delete deck</a>
-    </div>
-    <% } %>
-    <div class="btn-field align-text-left">
-        <a class="btn btn-info export" data-export-type="tts" role="button" href="#">Export to Tabletop</a>
-        <a class="btn btn-info export" data-export-type="txt" role="button" href="#">Export deck list to text file</a>
-    </div>
+    <% if (currentUser !=null) { %>
+        <div class="btn-field align-text-left">
+            <button id="saveDeckBtn" data-save-type=<%=typeof (deck) !='undefined' ? "edit" : "new" %>
+                class="btn btn-info" type="button">Save Deck</button>
+            <% if (typeof (deck) !='undefined' ) { %>
+                <%# For some reason, the last lines of the enableDeckExport function in card-search.js make it so that
+                    this button only renders if the code for it is written twice %>
+                    <button formmethod="POST" id="deleteDeckBtn" class="btn btn-warning" type="submit"
+                        formaction="/decks/delete/<%= deck.id %>?_method=delete">Delete Deck</button>
+                    <button formmethod="POST" id="deleteDeckBtn" class="btn btn-warning" type="submit"
+                        formaction="/decks/delete/<%= deck.id %>?_method=delete">Delete Deck</button>
+                    <% } %>
+        </div>
+
+        <% } else { %>
+            <div class="btn-field align-text-left">
+                <button id="saveDeckBtn" data-save-type="localStorage" class="btn btn-info" type="button">Save
+                    Deck</button>
+                <a id="deleteDeckBtn" class="btn btn-warning">Delete deck</a>
+            </div>
+            <% } %>
+                <div class="btn-field align-text-left">
+                    <a class="btn btn-info export" data-export-type="tts" role="button" href="#">Export to Tabletop</a>
+                    <a class="btn btn-info export" data-export-type="txt" role="button" href="#">Export deck list to
+                        text file</a>
+                </div>
 </form>
+
 <script>
-    const form = document.getElementById("deckExportForm")
+    const deckNameInput = document.getElementById("deckName")
     const saveDeckBtn = document.getElementById('saveDeckBtn')
-    form.onsubmit = e => {
-        e.preventDefault()
-        return saveDeckBtn.click()
+    deckNameInput.onkeydown = e => {
+        if (e.keyCode === 13) {
+            e.preventDefault()
+            return saveDeckBtn.click()
+        }
     }
 </script>
+
 <div id="card-count" data-count="0">Card count: </div>
 <small class="btn " data-tooltip="If you have Tabletop Simulator installed, then simply drag the .json file into the following folder:
     C:\Users\YouUserNameHere\Documents\My Games\Tabletop Simulator\Saves\Saved Objects (this path is a bit different if you're not on Windows)

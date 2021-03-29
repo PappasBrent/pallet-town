@@ -180,8 +180,8 @@ function enableDeckExport(saveDeckBtn, userCardGrid) {
             }
         }
     }
-    // putting this here will do for now
-    const deckNameInput = document.getElementById('deckName')
+    // putting this here will do for now, something about this line causes EJS to act weird though
+    const deckNameInput = document.getElementById("deckName")
     deckNameInput.oninput = enableDeckSave(saveDeckBtn, userCardGrid)
 }
 
@@ -274,7 +274,7 @@ function enableDeckSave(saveDeckBtn, userCardGrid) {
 function loadLocalStorageDecks(userCardGrid) {
     const deckToEdit = JSON.parse(localStorage.getItem('deckToEdit') || '{deckName:"",cards:[]}')
     originalDeckName = deckToEdit.deckName
-    document.getElementById('deckName').value = originalDeckName
+    document.getElementById("deckName").value = originalDeckName
     for (const card of deckToEdit.cards) {
         const cardDiv = document.createElement('DIV')
         cardDiv.classList.add('card')
