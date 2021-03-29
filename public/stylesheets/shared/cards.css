@@ -20,6 +20,10 @@
     flex-wrap: wrap;
 }
 
+.deck-name {
+    margin-right: 1rem;
+}
+
 .card-grid * {}
 
 .card-container {

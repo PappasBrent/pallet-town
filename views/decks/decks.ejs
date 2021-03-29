@@ -3,7 +3,7 @@
     </h2>
     <div id="deckGrid" class="card-grid">
         <% decks.forEach(deck=> { %>
-            <a href="/decks/edit/<%= deck.id %>">
+            <a class="deck-name" href="/decks/edit/<%= deck.id %>">
                 <%= deck.name %>
                     <% if (deck.cards.length> 0) { %>
                         <div class="card" style="background-image:url('<%=deck.cards[0].imageurl%>')" alt=""></div>
@@ -25,6 +25,7 @@
                             const a = document.createElement('A')
                             a.setAttribute('href', "/decks/edit")
                             a.innerText = deckName
+                            a.classList.add("deck-name")
                             a.onclick = function (e) {
                                 e.preventDefault()
                                 localStorage.setItem('deckToEdit', JSON.stringify(deck))
