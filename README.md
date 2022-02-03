@@ -5,7 +5,7 @@ Original author: Brent Pappas
 
 ## Update: February 2022
 As of February 2022, I will no longer be maintaining Pallet Town.
-If anyone programmers out there would like to revive it, please feel free.
+If any programmers out there would like to revive it, please feel free.
 
 Here is a summary of the tools I used to build Pallet Town.
 - Git/GitHub: For version control.
