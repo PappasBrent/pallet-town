@@ -14,4 +14,4 @@ Here is a summary of the tools I used to build Pallet Town.
 - MongoDB: For the user and deck database.
 - Heroku: For site hosting.
 - Amazon AWS: For storing all the user-generated card images.
-- [The Pokemon TCG API](https://pokemontcg.io/) for individual card scans.
+- [The Pokemon TCG API](https://pokemontcg.io/): For individual card scans.
